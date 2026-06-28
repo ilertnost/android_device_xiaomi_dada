@@ -10,6 +10,9 @@ $(call inherit-product, device/xiaomi/sm8750-common/common.mk)
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/xiaomi/dada/dada-vendor.mk)
 
+# MIUI Camera
+$(call inherit-product, device/xiaomi/dada-miuicamera/device.mk)
+
 # Overlays
 PRODUCT_PACKAGES += \
     ApertureResDada \
