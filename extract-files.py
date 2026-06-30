@@ -124,7 +124,12 @@ blob_fixups: blob_fixups_user_type = {
             'android.hardware.camera.device-V1-ndk.so',
             'android.hardware.camera.device-V2-ndk.so'
         ),
-    'vendor/lib64/libultrahdr.so': blob_fixup()
+    (
+        'vendor/lib64/libjpegdecoder_dada.so',
+        'vendor/lib64/libjpegencoder_dada.so',
+    ): blob_fixup()
+        .fix_soname(),
+    'vendor/lib64/libultrahdr_dada.so': blob_fixup()
         .replace_needed(
             'libjpegencoder.so',
             'libjpegencoder_dada.so'
@@ -132,7 +137,8 @@ blob_fixups: blob_fixups_user_type = {
         .replace_needed(
             'libjpegdecoder.so',
             'libjpegdecoder_dada.so'
-        ),
+        )
+        .fix_soname(),
     ('odm/lib64/camera/plugins/com.xiaomi.plugin.jpegrAggr.so', 'odm/lib64/camera/plugins/com.xiaomi.plugin.gainmap.so'): blob_fixup()
         .replace_needed(
             'libultrahdr.so',

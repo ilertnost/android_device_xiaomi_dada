@@ -2070,6 +2070,8 @@ vendor/etc/camera/cameraopt_vendor.json
 vendor/lib64/libcamera2ndk_vendor.so
 vendor/lib64/libcameraobserver.so
 vendor/lib64/libcameraopt.so
+vendor/lib64/libjpegdecoder.so:vendor/lib64/libjpegdecoder_dada.so
+vendor/lib64/libjpegencoder.so:vendor/lib64/libjpegencoder_dada.so
 vendor/lib64/libmialgo.so
 vendor/lib64/libopencl_loader.so
 vendor/lib64/libopencv_core_se.so
@@ -2077,7 +2079,7 @@ vendor/lib64/libopencv_core.so
 vendor/lib64/libopencv_imgproc_se.so
 vendor/lib64/libopencv_imgproc.so
 vendor/lib64/libSNPESample.so
-vendor/lib64/libultrahdr.so;MODULE=libultrahdr_dada
+vendor/lib64/libultrahdr.so:vendor/lib64/libultrahdr_dada.so
 vendor/lib64/vendor.xiaomi.hardware.aidl.intentaware-V1-ndk_platform.so
 vendor/lib64/vendor.xiaomi.hardware.aon-V1-ndk.so
 vendor/lib64/vendor.xiaomi.hardware.camera.injection-client.so
