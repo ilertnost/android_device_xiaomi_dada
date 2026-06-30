@@ -2260,8 +2260,14 @@ odm/etc/display/qdcm_calib_data_xiaomi_o3_36_02_0b_cmd_mode_dsc_dsi_panel.json
 odm/etc/display/qdcm_calib_data_xiaomi_o3_42_0d_0a_cmd_mode_dsc_dsi_panel.json
 
 # Dolby Vision
+odm/vendor/etc/dolby_vision.cfg
 odm/vendor/etc/videobox.json
 odm/vendor/etc/videoCodecCapability.json
+odm/vendor/persist/display/dolby_vision.cfg
+vendor/etc/media_codecs_performance_sun_vendor.xml
+vendor/etc/media_codecs_performance_sun_vendor_without_dvenc.xml
+vendor/etc/media_codecs_sun_vendor.xml
+vendor/etc/media_codecs_sun_vendor_without_dvenc.xml
 
 # QSN
 odm/lib64/libqsegnet.so
