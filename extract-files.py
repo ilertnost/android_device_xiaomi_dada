@@ -84,10 +84,9 @@ namespace_imports = [
 ]
 
 blob_fixups: blob_fixups_user_type = {
-    (
-        'odm/bin/hw/vendor.qti.camera.provider-service_64',
-        'vendor/bin/hw/vendor.qti.hardware.display.allocator-service',
-    ): camera_stock_executable_fixup(),
+    'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup()
+        .add_needed('libcamera_heap_tagging_shim.so'),
+    'vendor/bin/hw/vendor.qti.hardware.display.allocator-service': camera_stock_executable_fixup(),
     (
         'odm/etc/camera/motiontuning.xml',
         'odm/etc/camera/snsc_bokeh_motiontuning.xml',
