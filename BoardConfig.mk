@@ -20,6 +20,9 @@ SOONG_CONFIG_xiaomi_display += \
 SOONG_CONFIG_xiaomi_display_cwb_notify_sensor := true
 SOONG_CONFIG_xiaomi_display_panel_dimensions_tenths_mm := true
 
+SOONG_CONFIG_qtidisplay += prebuilt_allocator
+SOONG_CONFIG_qtidisplay_prebuilt_allocator := true
+
 # Dtb/o
 BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PATH)/dtbo.img
 BOARD_PREBUILT_DTBIMAGE_DIR := $(KERNEL_PATH)/dtb
