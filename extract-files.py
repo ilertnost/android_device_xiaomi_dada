@@ -84,8 +84,12 @@ namespace_imports = [
 ]
 
 blob_fixups: blob_fixups_user_type = {
-    'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup()
-        .add_needed('libcamera_heap_tagging_shim.so'),
+    'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup(),
+    'odm/lib64/camera/plugins/com.xiaomi.plugin.depurple.so': blob_fixup()
+        .sig_replace(
+            'E0 03 13 AA 65 04 00 94 60 82 01 91 5D 04 00 94',
+            'E0 03 13 AA 1F 20 03 D5 60 82 01 91 5D 04 00 94',
+        ),
     'vendor/bin/hw/vendor.qti.hardware.display.allocator-service': camera_stock_executable_fixup(),
     (
         'odm/etc/camera/motiontuning.xml',
