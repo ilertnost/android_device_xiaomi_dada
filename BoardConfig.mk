@@ -13,6 +13,13 @@ include device/xiaomi/sm8750-common/BoardConfigCommon.mk
 # Display
 TARGET_SCREEN_DENSITY := 520
 
+SOONG_CONFIG_NAMESPACES += xiaomi_display
+SOONG_CONFIG_xiaomi_display += \
+    cwb_notify_sensor \
+    panel_dimensions_tenths_mm
+SOONG_CONFIG_xiaomi_display_cwb_notify_sensor := true
+SOONG_CONFIG_xiaomi_display_panel_dimensions_tenths_mm := true
+
 # Dtb/o
 BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PATH)/dtbo.img
 BOARD_PREBUILT_DTBIMAGE_DIR := $(KERNEL_PATH)/dtb
