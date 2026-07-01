@@ -23,32 +23,43 @@ from extract_utils.utils import run_cmd
 CAMERA_STOCK_RUNPATH = '/vendor/lib64/camera-stock'
 
 CAMERA_STOCK_LIBRARIES = (
-    'vendor/lib64/android.hardware.graphics.allocator-V2-ndk.so',
-    'vendor/lib64/android.hardware.graphics.allocator@2.0.so',
-    'vendor/lib64/android.hardware.graphics.allocator@3.0.so',
-    'vendor/lib64/android.hardware.graphics.allocator@4.0.so',
-    'vendor/lib64/android.hardware.graphics.common@1.0.so',
-    'vendor/lib64/android.hardware.graphics.common@1.1.so',
-    'vendor/lib64/android.hardware.graphics.common@1.2.so',
-    'vendor/lib64/android.hardware.graphics.mapper@2.0.so',
-    'vendor/lib64/android.hardware.graphics.mapper@2.1.so',
-    'vendor/lib64/android.hardware.graphics.mapper@3.0.so',
-    'vendor/lib64/android.hardware.graphics.mapper@4.0.so',
-    'vendor/lib64/libcamera_metadata.so',
-    'vendor/lib64/libcutils.so',
-    'vendor/lib64/libdisplaydebug.so',
-    'vendor/lib64/libdmabufheap.so',
-    'vendor/lib64/libgralloc.qti.so',
-    'vendor/lib64/libgralloccore.so',
-    'vendor/lib64/libgralloctypes.so',
-    'vendor/lib64/libgrallocutils.so',
-    'vendor/lib64/libhardware.so',
-    'vendor/lib64/libhidlbase.so',
-    'vendor/lib64/libhidltransport.so',
-    'vendor/lib64/libmapperutils.so',
-    'vendor/lib64/libui.so',
-    'vendor/lib64/libutils.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.allocator-V2-ndk.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.allocator@2.0.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.allocator@3.0.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.allocator@4.0.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.common@1.0.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.common@1.1.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.common@1.2.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.mapper@2.0.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.mapper@2.1.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.mapper@3.0.so',
+    'vendor/lib64/camera-stock/android.hardware.graphics.mapper@4.0.so',
+    'vendor/lib64/camera-stock/libcamera_metadata.so',
+    'vendor/lib64/camera-stock/libcutils.so',
+    'vendor/lib64/camera-stock/libdisplaydebug.so',
+    'vendor/lib64/camera-stock/libdmabufheap.so',
+    'vendor/lib64/camera-stock/libgralloc.qti.so',
+    'vendor/lib64/camera-stock/libgralloccore.so',
+    'vendor/lib64/camera-stock/libgralloctypes.so',
+    'vendor/lib64/camera-stock/libgrallocutils.so',
+    'vendor/lib64/camera-stock/libhardware.so',
+    'vendor/lib64/camera-stock/libhidlbase.so',
+    'vendor/lib64/camera-stock/libhidltransport.so',
+    'vendor/lib64/camera-stock/libmapperutils.so',
+    'vendor/lib64/camera-stock/libui.so',
+    'vendor/lib64/camera-stock/libutils.so',
 )
+
+lib_fixups: lib_fixups_user_type = {
+    **lib_fixups,
+    # The stock camera blobs load both allocator AIDL V1 and V2 at runtime.
+    # Soong cannot link two versions of the same AIDL interface into one
+    # prebuilt dependency graph, so keep V1 as a runtime-only copy rule.
+    (
+        'android.hardware.graphics.allocator-V1-ndk',
+        'android.hardware.sensors-V2-ndk',
+    ): lib_fixup_remove,
+}
 
 
 def set_camera_stock_runpath(ctx, file, file_path, *args, **kwargs):
