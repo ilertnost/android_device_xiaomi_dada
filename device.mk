@@ -19,7 +19,8 @@ $(call inherit-product, device/xiaomi/dada-miuicamera/device.mk)
 # The stock camera HAL directly loads the frozen sensors AIDL V2 while the
 # platform sensorservice uses V3.
 PRODUCT_PACKAGES += \
-    android.hardware.sensors-V2-ndk
+    android.hardware.sensors-V2-ndk \
+    libcamera_heap_tagging_shim
 
 # Overlays
 PRODUCT_PACKAGES += \

@@ -1,0 +1,10 @@
+cc_library_shared {
+    name: "libcamera_heap_tagging_shim",
+    srcs: ["heap_tagging_shim.c"],
+    cflags: [
+        "-Wall",
+        "-Werror",
+    ],
+    compile_multilib: "64",
+    device_specific: true,
+}
