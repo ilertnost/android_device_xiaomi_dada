@@ -55,7 +55,10 @@ CAMERA_STOCK_LIBRARIES = (
 # graph because Soong rejects two versions of one AIDL interface in a module.
 lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
-    'android.hardware.graphics.allocator-V1-ndk': lib_fixup_remove,
+    (
+        'android.hardware.graphics.allocator-V1-ndk',
+        'android.hardware.sensors-V2-ndk',
+    ): lib_fixup_remove,
 }
 
 
