@@ -1563,7 +1563,7 @@ odm/lib64/camera/components/com.qti.node.aon.so
 odm/lib64/camera/components/com.qti.node.customhwnode.so
 odm/lib64/camera/components/com.qti.node.depth.so
 odm/lib64/camera/components/com.qti.node.depthprovider.so
-odm/lib64/camera/components/com.qti.node.dewarp.so
+odm/lib64/camera/components/com.qti.node.dewarp.so;DISABLE_CHECKELF
 odm/lib64/camera/components/com.qti.node.dummydepth.so
 odm/lib64/camera/components/com.qti.node.dummyrtb.so
 odm/lib64/camera/components/com.qti.node.dummysat.so
@@ -1862,9 +1862,9 @@ odm/lib64/com.xiaomi.immunesystem.hook.mtkhal.so
 odm/lib64/com.xiaomi.messagecenter.so
 odm/lib64/com.xiaomi.plugin.ecdengine.so
 odm/lib64/hw/camera.qcom.sm8750.so
-odm/lib64/hw/camera.qcom.so;SYMLINK=vendor/lib64/hw/camera.qcom.so
+odm/lib64/hw/camera.qcom.so;DISABLE_CHECKELF;SYMLINK=vendor/lib64/hw/camera.qcom.so
 odm/lib64/hw/com.qti.chi.offline.so
-odm/lib64/hw/com.qti.chi.override.so;SYMLINK=vendor/lib64/hw/com.qti.chi.override.so
+odm/lib64/hw/com.qti.chi.override.so;DISABLE_CHECKELF;SYMLINK=vendor/lib64/hw/com.qti.chi.override.so
 odm/lib64/immunesystem.db.sqlite3.so
 odm/lib64/libAF.so
 odm/lib64/libAncHumanPreviewBokeh.so
@@ -1901,7 +1901,7 @@ odm/lib64/libcamxhwlfrontend.so
 odm/lib64/libcamxhwlipedriver.so
 odm/lib64/libcamxhwnodecontext.so
 odm/lib64/libcamxifestriping.so
-odm/lib64/libcamximageformatutils.so
+odm/lib64/libcamximageformatutils.so;DISABLE_CHECKELF
 odm/lib64/libcamxncsdatafactory.so
 odm/lib64/libcamxods.so
 odm/lib64/libcamxofehwl.so
@@ -1912,7 +1912,7 @@ odm/lib64/libcamxswispiqmodule.so
 odm/lib64/libcamxswprocessalgo.so
 odm/lib64/libcamxtintlessalgo.so
 odm/lib64/libcamxvppservicebase.so
-odm/lib64/libchifeature2.so
+odm/lib64/libchifeature2.so;DISABLE_CHECKELF
 odm/lib64/libchilog.so
 odm/lib64/libchinodeevautils.so
 odm/lib64/libchinodehmeutils.so
@@ -2066,7 +2066,7 @@ odm/lib64/libvideoml.so
 odm/lib64/libwa_widelens_undistort.so
 odm/lib64/libxmi_slow_motion_mein.so
 odm/lib64/vendor.qti.hardware.camera.aon-service-impl.so
-odm/lib64/vendor.qti.hardware.camera.offlinecamera-service-impl.so
+odm/lib64/vendor.qti.hardware.camera.offlinecamera-service-impl.so;DISABLE_CHECKELF
 odm/lib64/vendor.xiaomi.hardware.aidl.intentaware-V1-impl.so
 odm/lib64/vendor.xiaomi.hardware.aidlbgservice-V1-impl.so
 odm/lib64/vendor.xiaomi.hardware.aidlbgservice-V1-ndk.so
