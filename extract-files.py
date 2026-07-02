@@ -50,6 +50,14 @@ CAMERA_STOCK_LIBRARIES = (
     'libutils.so',
 )
 
+# OS3.0.6.0 camera blobs load allocator AIDL V1 at runtime alongside V2.
+# Keep the stock V1 library as a copy rule, but omit it from Soong's link
+# graph because Soong rejects two versions of one AIDL interface in a module.
+lib_fixups: lib_fixups_user_type = {
+    **lib_fixups,
+    'android.hardware.graphics.allocator-V1-ndk': lib_fixup_remove,
+}
+
 
 def set_camera_stock_runpath(ctx, file, file_path, *args, **kwargs):
     run_cmd(
