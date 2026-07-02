@@ -18,8 +18,7 @@ $(call inherit-product, device/xiaomi/dada-miuicamera/device.mk)
 
 # Runtime compatibility pieces specific to the stock camera and allocator.
 PRODUCT_PACKAGES += \
-    android.hardware.graphics.allocator-V1-ndk.vendor \
-    android.hardware.graphics.common-V5-ndk.vendor \
+    android.hardware.graphics.allocator-V1-ndk \
     libcamera_heap_tagging_shim
 
 # Overlays
