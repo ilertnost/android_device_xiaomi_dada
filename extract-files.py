@@ -23,7 +23,6 @@ from extract_utils.utils import run_cmd
 CAMERA_STOCK_RUNPATH = '/vendor/lib64/camera-stock'
 
 CAMERA_STOCK_LIBRARIES = (
-    'vendor/lib64/camera-stock/android.hardware.graphics.allocator-V1-ndk.so',
     'vendor/lib64/camera-stock/android.hardware.graphics.allocator-V2-ndk.so',
     'vendor/lib64/camera-stock/android.hardware.graphics.allocator@2.0.so',
     'vendor/lib64/camera-stock/android.hardware.graphics.allocator@3.0.so',
@@ -36,7 +35,6 @@ CAMERA_STOCK_LIBRARIES = (
     'vendor/lib64/camera-stock/android.hardware.graphics.mapper@3.0.so',
     'vendor/lib64/camera-stock/android.hardware.graphics.mapper@4.0.so',
     'vendor/lib64/camera-stock/libcamera_metadata.so',
-    'vendor/lib64/camera-stock/libc++.so',
     'vendor/lib64/camera-stock/libcutils.so',
     'vendor/lib64/camera-stock/libdisplaydebug.so',
     'vendor/lib64/camera-stock/libdmabufheap.so',
@@ -86,12 +84,11 @@ namespace_imports = [
 ]
 
 blob_fixups: blob_fixups_user_type = {
-    # Keep the camera provider on the platform vendor namespace. Pointing the
-    # provider at camera-stock only affects its direct dependencies; libraries
-    # loaded later by CHI/CamX still resolve from /vendor/lib64. That mixes two
-    # libutils/libui/graphics ABI sets in one process and corrupts CHI request
-    # state. The stock provider has no RUNPATH, so only add the tagging shim.
     'odm/bin/hw/vendor.qti.camera.provider-service_64': blob_fixup()
+        .call(
+            set_camera_stock_runpath,
+            need_tmp_dir=False,
+        )
         .add_needed('libcamera_heap_tagging_shim.so'),
     'odm/lib64/camera/plugins/com.xiaomi.plugin.depurple.so': blob_fixup()
         .sig_replace(
