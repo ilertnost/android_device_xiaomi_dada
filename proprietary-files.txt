@@ -1792,7 +1792,6 @@ odm/lib64/hw/fingerprint.goodix_us.so;DISABLE_DEPS
 odm/lib64/hw/fingerprint.qcom_us.so;DISABLE_DEPS
 odm/lib64/libgf_hal.so;DISABLE_DEPS
 odm/lib64/libmmfp.so;DISABLE_DEPS
-odm/lib64/libqc_hal.so;DISABLE_DEPS
 
 # Camera ODM
 odm/bin/hw/misensor_camera
