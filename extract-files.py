@@ -96,6 +96,28 @@ namespace_imports = [
 
 blob_fixups: blob_fixups_user_type = {
     'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup(),
+    # Xiaomi's super-night formatter routes its bounded destination through a
+    # compiler-generated sprintf helper. The generated version string exceeds
+    # that 128-byte destination and Android's FORTIFY aborts the entire camera
+    # provider. Convert the helper to the equivalent snprintf ABI, preserving
+    # the full super-night pipeline while safely truncating diagnostic text.
+    'odm/lib64/libmi_supernight_raw.so': blob_fixup()
+        .sig_replace(
+            'E8 03 02 AA E2 03 01 AA A4 43 01 D1 E1 03 1F 2A '
+            'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E3 03 08 AA '
+            'A9 AB 3D A9 60 05 40 AD A0 87 3D AD 38 79 08 94',
+            'E8 03 02 AA E3 03 01 AA A5 43 01 D1 E2 03 1F 2A '
+            'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E4 03 08 AA '
+            'A9 AB 3D A9 60 05 40 AD A0 87 3D AD 60 79 08 94',
+        )
+        .sig_replace(
+            'E8 03 02 AA E2 03 01 AA A4 43 01 D1 E1 03 1F 2A '
+            'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E3 03 08 AA '
+            'A9 AB 3D A9 60 05 40 AD A0 87 3D AD A4 76 08 94',
+            'E8 03 02 AA E3 03 01 AA A5 43 01 D1 E2 03 1F 2A '
+            'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E4 03 08 AA '
+            'A9 AB 3D A9 60 05 40 AD A0 87 3D AD CC 76 08 94',
+        ),
     'odm/lib64/camera/plugins/com.xiaomi.plugin.depurple.so': blob_fixup()
         .sig_replace(
             'E0 03 13 AA 65 04 00 94 60 82 01 91 5D 04 00 94',
