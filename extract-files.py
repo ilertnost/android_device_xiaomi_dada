@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-import extract_utils.tools
 from extract_utils.fixups_blob import (
     blob_fixup,
     blob_fixups_user_type,
@@ -18,53 +17,8 @@ from extract_utils.main import (
     ExtractUtils,
     ExtractUtilsModule,
 )
-from extract_utils.utils import run_cmd
-
-CAMERA_STOCK_RUNPATH = '/vendor/lib64/camera-stock'
-
-CAMERA_STOCK_LIBRARIES = (
-    'vendor/lib64/android.hardware.graphics.allocator-V2-ndk.so',
-    'vendor/lib64/android.hardware.graphics.allocator@2.0.so',
-    'vendor/lib64/android.hardware.graphics.allocator@3.0.so',
-    'vendor/lib64/android.hardware.graphics.allocator@4.0.so',
-    'vendor/lib64/android.hardware.graphics.common@1.0.so',
-    'vendor/lib64/android.hardware.graphics.common@1.1.so',
-    'vendor/lib64/android.hardware.graphics.common@1.2.so',
-    'vendor/lib64/android.hardware.graphics.mapper@2.0.so',
-    'vendor/lib64/android.hardware.graphics.mapper@2.1.so',
-    'vendor/lib64/android.hardware.graphics.mapper@3.0.so',
-    'vendor/lib64/android.hardware.graphics.mapper@4.0.so',
-    'vendor/lib64/libcamera_metadata.so',
-    'vendor/lib64/libcutils.so',
-    'vendor/lib64/libdisplaydebug.so',
-    'vendor/lib64/libdmabufheap.so',
-    'vendor/lib64/libgralloc.qti.so',
-    'vendor/lib64/libgralloccore.so',
-    'vendor/lib64/libgralloctypes.so',
-    'vendor/lib64/libgrallocutils.so',
-    'vendor/lib64/libhardware.so',
-    'vendor/lib64/libhidlbase.so',
-    'vendor/lib64/libhidltransport.so',
-    'vendor/lib64/libmapperutils.so',
-    'vendor/lib64/libui.so',
-    'vendor/lib64/libutils.so',
-)
-
-
-def set_camera_stock_runpath(ctx, file, file_path, *args, **kwargs):
-    run_cmd(
-        [
-            extract_utils.tools.patchelf_version_path_map[
-                extract_utils.tools.DEFAULT_PATCHELF_VERSION
-            ],
-            '--set-rpath',
-            CAMERA_STOCK_RUNPATH,
-            file_path,
-        ]
-    )
 
 namespace_imports = [
-    'device/xiaomi/dada',
     'device/xiaomi/sm8750-common',
     'hardware/qcom-caf/sm8750',
     'hardware/xiaomi',
@@ -73,26 +27,16 @@ namespace_imports = [
 ]
 
 blob_fixups: blob_fixups_user_type = {
-    'odm/bin/hw/vendor.qti.camera.provider-service_64': blob_fixup()
-        .call(
-            set_camera_stock_runpath,
-            need_tmp_dir=False,
-        )
-        .add_needed('libcamera_heap_tagging_shim.so'),
     'odm/lib64/camera/plugins/com.xiaomi.plugin.depurple.so': blob_fixup()
         .sig_replace(
             'E0 03 13 AA 65 04 00 94 60 82 01 91 5D 04 00 94',
             'E0 03 13 AA 1F 20 03 D5 60 82 01 91 5D 04 00 94',
         ),
-    CAMERA_STOCK_LIBRARIES: blob_fixup()
-        .call(
-            set_camera_stock_runpath,
-            need_tmp_dir=False,
-        ),
-    'vendor/bin/hw/vendor.qti.hardware.display.allocator-service': blob_fixup()
-        .call(
-            set_camera_stock_runpath,
-            need_tmp_dir=False,
+    'vendor/etc/init/vendor.qti.hardware.display.allocator-service.rc': blob_fixup()
+        .regex_replace(
+            r'(\n    class hal animation)',
+            '\n    setenv LD_LIBRARY_PATH /vendor/lib64/camera-stock:/vendor/lib64'
+            r'\1',
         ),
     (
         'odm/etc/camera/motiontuning.xml',
