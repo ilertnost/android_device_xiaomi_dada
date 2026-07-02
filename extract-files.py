@@ -22,6 +22,34 @@ from extract_utils.utils import run_cmd
 
 CAMERA_STOCK_RUNPATH = '/vendor/lib64/camera-stock'
 
+CAMERA_STOCK_LIBRARIES = (
+    'android.hardware.graphics.allocator-V2-ndk.so',
+    'android.hardware.graphics.allocator@2.0.so',
+    'android.hardware.graphics.allocator@3.0.so',
+    'android.hardware.graphics.allocator@4.0.so',
+    'android.hardware.graphics.common@1.0.so',
+    'android.hardware.graphics.common@1.1.so',
+    'android.hardware.graphics.common@1.2.so',
+    'android.hardware.graphics.mapper@2.0.so',
+    'android.hardware.graphics.mapper@2.1.so',
+    'android.hardware.graphics.mapper@3.0.so',
+    'android.hardware.graphics.mapper@4.0.so',
+    'libcamera_metadata.so',
+    'libcutils.so',
+    'libdisplaydebug.so',
+    'libdmabufheap.so',
+    'libgralloc.qti.so',
+    'libgralloccore.so',
+    'libgralloctypes.so',
+    'libgrallocutils.so',
+    'libhardware.so',
+    'libhidlbase.so',
+    'libhidltransport.so',
+    'libmapperutils.so',
+    'libui.so',
+    'libutils.so',
+)
+
 
 def set_camera_stock_runpath(ctx, file, file_path, *args, **kwargs):
     run_cmd(
@@ -35,6 +63,18 @@ def set_camera_stock_runpath(ctx, file, file_path, *args, **kwargs):
         ]
     )
 
+
+def camera_stock_executable_fixup():
+    fixup = blob_fixup().call(
+        set_camera_stock_runpath,
+        need_tmp_dir=False,
+    )
+
+    for library in CAMERA_STOCK_LIBRARIES:
+        fixup.add_needed(library)
+
+    return fixup
+
 namespace_imports = [
     'device/xiaomi/sm8750-common',
     'hardware/qcom-caf/sm8750',
@@ -44,15 +84,13 @@ namespace_imports = [
 ]
 
 blob_fixups: blob_fixups_user_type = {
+    'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup(),
     'odm/lib64/camera/plugins/com.xiaomi.plugin.depurple.so': blob_fixup()
         .sig_replace(
             'E0 03 13 AA 65 04 00 94 60 82 01 91 5D 04 00 94',
             'E0 03 13 AA 1F 20 03 D5 60 82 01 91 5D 04 00 94',
         ),
-    'vendor/bin/hw/vendor.qti.hardware.display.allocator-service': blob_fixup().call(
-        set_camera_stock_runpath,
-        need_tmp_dir=False,
-    ),
+    'vendor/bin/hw/vendor.qti.hardware.display.allocator-service': camera_stock_executable_fixup(),
     (
         'odm/etc/camera/motiontuning.xml',
         'odm/etc/camera/snsc_bokeh_motiontuning.xml',
