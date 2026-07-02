@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+import extract_utils.tools
 from extract_utils.fixups_blob import (
     blob_fixup,
     blob_fixups_user_type,
@@ -17,6 +18,22 @@ from extract_utils.main import (
     ExtractUtils,
     ExtractUtilsModule,
 )
+from extract_utils.utils import run_cmd
+
+CAMERA_STOCK_RUNPATH = '/vendor/lib64/camera-stock'
+
+
+def set_camera_stock_runpath(ctx, file, file_path, *args, **kwargs):
+    run_cmd(
+        [
+            extract_utils.tools.patchelf_version_path_map[
+                extract_utils.tools.DEFAULT_PATCHELF_VERSION
+            ],
+            '--set-rpath',
+            CAMERA_STOCK_RUNPATH,
+            file_path,
+        ]
+    )
 
 namespace_imports = [
     'device/xiaomi/sm8750-common',
@@ -32,12 +49,10 @@ blob_fixups: blob_fixups_user_type = {
             'E0 03 13 AA 65 04 00 94 60 82 01 91 5D 04 00 94',
             'E0 03 13 AA 1F 20 03 D5 60 82 01 91 5D 04 00 94',
         ),
-    'vendor/etc/init/vendor.qti.hardware.display.allocator-service.rc': blob_fixup()
-        .regex_replace(
-            r'(\n    class hal animation)',
-            '\n    setenv LD_LIBRARY_PATH /vendor/lib64/camera-stock:/vendor/lib64'
-            r'\1',
-        ),
+    'vendor/bin/hw/vendor.qti.hardware.display.allocator-service': blob_fixup().call(
+        set_camera_stock_runpath,
+        need_tmp_dir=False,
+    ),
     (
         'odm/etc/camera/motiontuning.xml',
         'odm/etc/camera/snsc_bokeh_motiontuning.xml',
