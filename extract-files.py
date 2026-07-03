@@ -118,10 +118,15 @@ blob_fixups: blob_fixups_user_type = {
             'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E4 03 08 AA '
             'A9 AB 3D A9 60 05 40 AD A0 87 3D AD CC 76 08 94',
         ),
+    # alCFR_Run invalidates its instance when processing fails. Closing that
+    # stale handle aborts in libmorpho_Depurple, while merely skipping cleanup
+    # leaves Depurple stuck in its initialized state and degrades later frames.
+    # Preserve the tuning allocation, mark the instance uninitialized, and let
+    # the existing reference-count path recreate it on the next request.
     'odm/lib64/camera/plugins/com.xiaomi.plugin.depurple.so': blob_fixup()
         .sig_replace(
             'E0 03 13 AA 65 04 00 94 60 82 01 91 5D 04 00 94',
-            'E0 03 13 AA 1F 20 03 D5 60 82 01 91 5D 04 00 94',
+            'E0 03 13 AA 7F A2 00 B9 60 82 01 91 5D 04 00 94',
         ),
     'vendor/bin/hw/vendor.qti.hardware.display.allocator-service': camera_stock_executable_fixup(),
     (
