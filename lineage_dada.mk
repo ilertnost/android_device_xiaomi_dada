@@ -29,3 +29,6 @@ BUILD_FINGERPRINT := Xiaomi/dada_global/dada:15/AQ3A.250226.002/OS3.0.6.0.WOCMIX
 
 # GMS
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
+
+# MindTheGapps
+$(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
