@@ -96,27 +96,35 @@ namespace_imports = [
 
 blob_fixups: blob_fixups_user_type = {
     'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup(),
-    # Xiaomi's super-night formatter routes its bounded destination through a
-    # compiler-generated sprintf helper. The generated version string exceeds
-    # that 128-byte destination and Android's FORTIFY aborts the entire camera
-    # provider. Convert the helper to the equivalent snprintf ABI, preserving
-    # the full super-night pipeline while safely truncating diagnostic text.
+    # Xiaomi's super-night formatters route their destinations through a
+    # compiler-generated sprintf helper. Convert the helpers to the ordinary
+    # vsnprintf ABI. Preserve known destination sizes and use two bytes for the
+    # one-character decrypt-dump formatter whose compiler object size is -1.
+    # This keeps the complete decrypt and imaging paths while bounding their
+    # diagnostic strings.
+    #
+    # MI_SN_Init copies a packed 64-byte initializer whose first compiler
+    # object is only 22 bytes. __strncpy_chk2 treats that first object's bound
+    # as the bound of the packed initializer and aborts before the copy. Keep
+    # the original 64-byte copy (the following bytes contain fields consumed
+    # by the parser) while routing it through the ordinary strncpy entry point.
     'odm/lib64/libmi_supernight_raw.so': blob_fixup()
+        .sig_replace('18 78 08 94 F8 07 40 91', 'E4 78 08 94 F8 07 40 91')
         .sig_replace(
             'E8 03 02 AA E2 03 01 AA A4 43 01 D1 E1 03 1F 2A '
             'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E3 03 08 AA '
             'A9 AB 3D A9 60 05 40 AD A0 87 3D AD 38 79 08 94',
-            'E8 03 02 AA E3 03 01 AA A5 43 01 D1 E2 03 1F 2A '
-            'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E4 03 08 AA '
-            'A9 AB 3D A9 60 05 40 AD A0 87 3D AD 60 79 08 94',
+            '48 00 80 52 3F 00 00 F1 A3 43 01 D1 21 50 88 9A '
+            'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 1F 20 03 D5 '
+            'A9 AB 3D A9 60 05 40 AD A0 87 3D AD 24 7A 08 94',
         )
         .sig_replace(
             'E8 03 02 AA E2 03 01 AA A4 43 01 D1 E1 03 1F 2A '
             'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E3 03 08 AA '
             'A9 AB 3D A9 60 05 40 AD A0 87 3D AD A4 76 08 94',
-            'E8 03 02 AA E3 03 01 AA A5 43 01 D1 E2 03 1F 2A '
-            'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 E4 03 08 AA '
-            'A9 AB 3D A9 60 05 40 AD A0 87 3D AD CC 76 08 94',
+            '48 00 80 52 3F 00 00 F1 A3 43 01 D1 21 50 88 9A '
+            'A9 83 1F F8 A9 83 00 91 AD B3 3E A9 1F 20 03 D5 '
+            'A9 AB 3D A9 60 05 40 AD A0 87 3D AD 90 77 08 94',
         ),
     # alCFR_Run invalidates its instance when processing fails. Closing that
     # stale handle aborts in libmorpho_Depurple, while merely skipping cleanup
