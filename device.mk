@@ -31,3 +31,6 @@ PRODUCT_PACKAGES += \
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH)
+
+# BCR
+$(call inherit-product, vendor/bcr/bcr.mk)
