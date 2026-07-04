@@ -1942,6 +1942,7 @@ odm/lib64/libfastmessage.so
 odm/lib64/libFS.so
 odm/lib64/libfuai_camera_alg.so
 odm/lib64/libhandgesture.arcsoft.so
+odm/lib64/libharbo.so
 odm/lib64/libhdr10plus.so
 odm/lib64/libheichal.so
 odm/lib64/libHISCppAlgos.so
