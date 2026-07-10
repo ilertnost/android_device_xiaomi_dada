@@ -96,6 +96,13 @@ namespace_imports = [
 
 blob_fixups: blob_fixups_user_type = {
     'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup(),
+    # HyperOS suspends the face/QR AON pipelines before opening the full camera.
+    # AOSP has no client for that handoff, so the pipelines retain SensorHw 1/2
+    # and prevent Cinematic mode from reserving its reference-frame pipeline.
+    # This is separate from SAT wide-always-on, which remains enabled below in
+    # the stock configuration and is used for camera quality and lens switching.
+    'odm/etc/camera/camxoverridesettings.txt': blob_fixup()
+        .regex_replace('enableAONUsecase=TRUE', 'enableAONUsecase=FALSE'),
     # Xiaomi's super-night formatters route their destinations through a
     # compiler-generated sprintf helper. Convert the helpers to the ordinary
     # vsnprintf ABI. Preserve known destination sizes and use two bytes for the
