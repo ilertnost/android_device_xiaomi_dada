@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="android.overlay.xiaomi.dada.esim">
+
+    <overlay
+        android:isStatic="true"
+        android:priority="802"
+        android:targetPackage="android"
+        android:requiredSystemPropertyName="ro.boot.hwc"
+        android:requiredSystemPropertyValue="GL" />
+</manifest>

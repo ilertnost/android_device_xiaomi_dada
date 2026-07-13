@@ -25,8 +25,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     ApertureResDada \
     FrameworksResDada \
+    FrameworksResDadaEsim \
     SettingsOverlayDada \
     SystemUIResDada
+
+# Xiaomi eSIM switcher
+PRODUCT_PACKAGES += \
+    XiaomiEsimSwitcher
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \

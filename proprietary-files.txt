@@ -2302,6 +2302,7 @@ odm/lib64/qsn2all.bin;SYMLINK=vendor/lib64/qsn2all.bin
 odm/lib64/qsn3all.bin;SYMLINK=vendor/lib64/qsn3all.bin
 
 # RIL
+system_ext/framework/xiaomi-modem-common.jar;MAKE_COPY_RULE_ONLY
 odm/etc/me_config.xml
 
 # Sensors
