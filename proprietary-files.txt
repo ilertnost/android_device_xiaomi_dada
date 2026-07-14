@@ -2301,8 +2301,12 @@ odm/lib64/qsn1rtlp43270.bin;SYMLINK=vendor/lib64/qsn1rtlp43270.bin
 odm/lib64/qsn2all.bin;SYMLINK=vendor/lib64/qsn2all.bin
 odm/lib64/qsn3all.bin;SYMLINK=vendor/lib64/qsn3all.bin
 
+# eSIM
+mi_ext/product/etc/default-permissions/EuiccGoogle-default-permissions-google.xml:product/etc/default-permissions/EuiccGoogle-default-permissions-google.xml
+mi_ext/product/etc/permissions/EuiccGoogle-permissions.xml:product/etc/permissions/EuiccGoogle-permissions.xml
+mi_ext/product/priv-app/EuiccGoogle_arm64/EuiccGoogle_arm64.apk:product/priv-app/EuiccGoogle_arm64/EuiccGoogle_arm64.apk;PRESIGNED
+
 # RIL
-system_ext/framework/xiaomi-modem-common.jar;MAKE_COPY_RULE_ONLY
 odm/etc/me_config.xml
 
 # Sensors

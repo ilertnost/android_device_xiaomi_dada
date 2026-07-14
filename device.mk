@@ -29,9 +29,9 @@ PRODUCT_PACKAGES += \
     SettingsOverlayDada \
     SystemUIResDada
 
-# Xiaomi eSIM switcher
-PRODUCT_PACKAGES += \
-    XiaomiEsimSwitcher
+# eSIM
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.telephony.euicc.mep.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/android.hardware.telephony.euicc.mep.xml
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
