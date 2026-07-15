@@ -2306,6 +2306,7 @@ mi_ext/product/etc/default-permissions/EuiccGoogle-default-permissions-google.xm
 mi_ext/product/priv-app/EuiccGoogle_arm64/EuiccGoogle_arm64.apk:product/priv-app/EuiccGoogle_arm64/EuiccGoogle_arm64.apk;PRESIGNED
 
 # RIL
+system_ext/framework/xiaomi-modem-common.jar;MAKE_COPY_RULE_ONLY
 odm/etc/me_config.xml
 
 # Sensors
