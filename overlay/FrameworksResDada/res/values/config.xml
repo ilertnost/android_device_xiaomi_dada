@@ -4,8 +4,8 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
-    <!-- The under-display TCS3720 is compensated with CWB data from display composer. -->
-    <string name="config_displayLightSensorType" translatable="false">android.sensor.light</string>
+    <!-- The HAL fuses the under-display TCS3720 and rear TCS3408 ALS values. -->
+    <string name="config_displayLightSensorType" translatable="false">xiaomi.sensor.fused_light</string>
 
     <!-- This on-change sensor does not always resend an unchanged value after screen-on. -->
     <bool name="config_autoBrightnessResetAmbientLuxAfterWarmUp">false</bool>
