@@ -1,7 +1,7 @@
 From 96a12f3fc089d946e9ffc1c5579fdd6bfff10930 Mon Sep 17 00:00:00 2001
 From: karthick-kk <kkzone@gmail.com>
 Date: Wed, 20 May 2026 17:28:35 +0530
-Subject: [PATCH] Aperture: Grant system camera access
+Subject: [PATCH 1/2] Aperture: Grant system camera access
 
 Allow the privileged camera app to access cameras marked as system-only.
 ---

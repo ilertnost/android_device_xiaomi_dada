@@ -1,0 +1,83 @@
+From 9683bdb03154d4fa2448ccf05d09c855ae40eef1 Mon Sep 17 00:00:00 2001
+From: turbo-boo <59400127+turbo-boo@users.noreply.github.com>
+Date: Tue, 30 Jun 2026 11:06:06 +0900
+Subject: [PATCH 2/2] display: make allocator service product-selectable
+
+Change-Id: Id29afe541f9b4947dae8e461ac35c0614ef1524c
+---
+ Android.bp                | 12 +++++++++++-
+ config/display-modules.mk |  5 ++++-
+ gralloc/Android.bp        |  7 +++++--
+ 3 files changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/Android.bp b/Android.bp
+index 8ba1c9a107c4f8ec3c68adb1ca247902bedb9111..d6c75c13f1f22918dca3c27e06097a37444c3f1d 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -12,7 +12,8 @@ soong_config_module_type {
+         "llvmcov",
+         "smmu_proxy",
+         "ubwcp_headers",
+-        "neo"
++        "neo",
++        "prebuilt_allocator",
+     ],
+     properties: [
+         "cflags",
+@@ -263,6 +264,15 @@ qtidisplay_cc_defaults {
+     },
+ }
+ 
++qtidisplay_cc_defaults {
++    name: "qtidisplay_allocator_service_defaults",
++    soong_config_variables: {
++        prebuilt_allocator: {
++            enabled: false,
++        },
++    },
++}
++
+ qtidisplay_cc_defaults {
+     name: "qti_qmaa_display_defaults",
+     defaults: ["qtidisplay_common_defaults"],
+diff --git a/config/display-modules.mk b/config/display-modules.mk
+index 229ceb23a85252e239b66628003180dc64e8ba30..cf4768fa553e50ff864d493e5f23ac0fdaaa8d42 100644
+--- a/config/display-modules.mk
++++ b/config/display-modules.mk
+@@ -1,9 +1,12 @@
+ DISPLAY_MODULES_HARDWARE:= vendor.qti.hardware.display.composer-service \
+                         android.hardware.graphics.mapper@4.0-impl-qti-display \
+                         vendor.qti.hardware.display.mapper@4.0.vendor \
+-                        vendor.qti.hardware.display.allocator-service \
+                         vendor.qti.hardware.display.snapalloc-impl
+ 
++ifneq ($(TARGET_USES_PREBUILT_DISPLAY_ALLOCATOR),true)
++    DISPLAY_MODULES_HARDWARE += vendor.qti.hardware.display.allocator-service
++endif
++
+ ifeq ($(TARGET_BUILD_VARIANT),userdebug)
+     DISPLAY_MODULES_HARDWARE += libcomposertestservice
+ endif
+diff --git a/gralloc/Android.bp b/gralloc/Android.bp
+index c68a7caec5ae1f447135ebbe7edcbc607c45ab82..26335386b22daa7f5aabe3b43c8159a1a223b85d 100644
+--- a/gralloc/Android.bp
++++ b/gralloc/Android.bp
+@@ -294,7 +294,10 @@ cc_library_shared {
+ // Allocator
+ cc_binary {
+     name: "vendor.qti.hardware.display.allocator-service",
+-    defaults: ["qtidisplay_alloc_defaults"],
++    defaults: [
++        "qtidisplay_allocator_service_defaults",
++        "qtidisplay_alloc_defaults",
++    ],
+     sanitize: {
+         integer_overflow: true,
+     },
+@@ -400,4 +403,4 @@ cc_fuzz {
+         "QtiAllocatorAIDL.cpp",
+         "fuzzer/fuzzer.cpp",
+     ],
+-}
+\ No newline at end of file
++}
