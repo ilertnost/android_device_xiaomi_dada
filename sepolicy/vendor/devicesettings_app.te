@@ -1,0 +1,15 @@
+# Touch tuning through the modern Xiaomi TouchFeature AIDL HAL.
+hal_client_domain(devicesettings_app, hal_touchfeature_xiaomi)
+
+# Charge bypass and battery safety checks.
+allow devicesettings_app vendor_sysfs_xm_power:dir search;
+allow devicesettings_app vendor_sysfs_xm_power:file rw_file_perms;
+r_dir_file(devicesettings_app, vendor_sysfs_battery_supply)
+
+# GameBar GPU statistics.
+r_dir_file(devicesettings_app, vendor_sysfs_kgsl)
+allow devicesettings_app vendor_sysfs_kgsl_gpuclk:file r_file_perms;
+
+# DisplayFeature-backed DC dimming property.
+get_prop(devicesettings_app, vendor_displayfeature_prop)
+set_prop(devicesettings_app, vendor_displayfeature_prop)

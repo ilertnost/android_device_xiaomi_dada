@@ -1,0 +1,7 @@
+;; Device-specific system_ext types introduced after the 202404 policy API.
+(type new_objects)
+(typeattribute new_objects)
+(typeattributeset new_objects
+  ( new_objects
+    devicesettings_app
+  ))

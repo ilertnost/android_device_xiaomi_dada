@@ -1,0 +1,29 @@
+app_domain(devicesettings_app)
+
+# Access standard system services used by XiaomiParts.
+allow devicesettings_app app_api_service:service_manager find;
+allow devicesettings_app audioserver_service:service_manager find;
+allow devicesettings_app cameraserver_service:service_manager find;
+allow devicesettings_app drmserver_service:service_manager find;
+allow devicesettings_app mediaextractor_service:service_manager find;
+allow devicesettings_app mediametrics_service:service_manager find;
+allow devicesettings_app mediaserver_service:service_manager find;
+
+# Store preferences under the system shared UID.
+allow devicesettings_app system_app_data_file:dir create_dir_perms;
+allow devicesettings_app system_app_data_file:{ file lnk_file } create_file_perms;
+
+# GameBar statistics.
+allow devicesettings_app proc_stat:file r_file_perms;
+r_dir_file(devicesettings_app, sysfs_devices_system_cpu)
+r_dir_file(devicesettings_app, sysfs_thermal)
+
+# Thermal profile selection.
+allow devicesettings_app sysfs_thermal:file rw_file_perms;
+
+# Saturation control.
+allow devicesettings_app surfaceflinger_service:service_manager find;
+binder_call(devicesettings_app, surfaceflinger)
+
+# GameBar GPU information.
+binder_call(devicesettings_app, gpuservice)
