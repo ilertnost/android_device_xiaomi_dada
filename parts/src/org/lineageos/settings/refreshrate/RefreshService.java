@@ -16,21 +16,18 @@
 
 package org.lineageos.settings.refreshrate;
 
-import android.app.ActivityManager;
 import android.app.ActivityTaskManager;
 import android.app.ActivityTaskManager.RootTaskInfo;
 import android.app.IActivityTaskManager;
 import android.app.TaskStackListener;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 import android.os.RemoteException;
+import android.util.Log;
 
 public class RefreshService extends Service {
 
@@ -41,23 +38,27 @@ public class RefreshService extends Service {
     private RefreshUtils mRefreshUtils;
     private IActivityTaskManager mActivityTaskManager;
 
-    private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mPreviousApp = "";
+            if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
+                updateForegroundApp(true);
+            } else {
+                mPreviousApp = null;
+            }
         }
     };
 
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
+        mRefreshUtils = new RefreshUtils(this);
         try {
             mActivityTaskManager = ActivityTaskManager.getService();
             mActivityTaskManager.registerTaskStackListener(mTaskListener);
         } catch (RemoteException e) {
             // Do nothing
         }
-        mRefreshUtils = new RefreshUtils(this);
         registerReceiver();
         super.onCreate();
     }
@@ -65,6 +66,7 @@ public class RefreshService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (DEBUG) Log.d(TAG, "Starting service");
+        updateForegroundApp(true);
         return START_STICKY;
     }
 
@@ -80,31 +82,45 @@ public class RefreshService extends Service {
         this.registerReceiver(mIntentReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
     }
 
+    private void updateForegroundApp(boolean force) {
+        if (mActivityTaskManager == null) {
+            return;
+        }
+
+        try {
+            final RootTaskInfo info = mActivityTaskManager.getFocusedRootTaskInfo();
+            if (info == null || info.topActivity == null) {
+                return;
+            }
+
+            String foregroundApp = info.topActivity.getPackageName();
+            if (force || !foregroundApp.equals(mPreviousApp)) {
+                mRefreshUtils.setRefreshRate(foregroundApp);
+                mPreviousApp = foregroundApp;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to update refresh rate", e);
+        }
+    }
+
     private final TaskStackListener mTaskListener = new TaskStackListener() {
         @Override
         public void onTaskStackChanged() {
-            try {
-                final RootTaskInfo info = mActivityTaskManager.getFocusedRootTaskInfo();
-                if (info == null || info.topActivity == null) {
-                    return;
-                }
-                String foregroundApp = info.topActivity.getPackageName();
-                int state = mRefreshUtils.getStateForPackage(foregroundApp);
-
-                if (!mRefreshUtils.isAppInList) {
-                    mRefreshUtils.getOldRate();
-                }
-
-                if (!foregroundApp.equals(mPreviousApp)) {
-                    mRefreshUtils.setRefreshRate(foregroundApp);
-                    mPreviousApp = foregroundApp;
-                }
-                if (state == RefreshUtils.STATE_LAND && mRefreshUtils.isAppInList) {
-                    mRefreshUtils.checkOrientationAndSetRate(foregroundApp);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            updateForegroundApp(false);
         }
     };
+
+    @Override
+    public void onDestroy() {
+        if (mActivityTaskManager != null) {
+            try {
+                mActivityTaskManager.unregisterTaskStackListener(mTaskListener);
+            } catch (RemoteException e) {
+                // Do nothing
+            }
+        }
+        unregisterReceiver(mIntentReceiver);
+        mRefreshUtils.shutdown();
+        super.onDestroy();
+    }
 }

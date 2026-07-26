@@ -32,7 +32,15 @@ public class ChargeUtils {
     private static final String TAG = "ChargeUtils";
 
     public static final String BYPASS_CHARGE_NODE =
-            "/sys/class/xm_power/charger/charge_interface/input_suspend";
+            "/sys/class/xm_power/charger/charge_interface/charge_enable";
+    private static final String BYPASS_CLIENT = "parts_bypass";
+    private static final String BUCK_CHARGER = "buck";
+    private static final String BYPASS_ENABLED_VALUE =
+            BYPASS_CLIENT + " " + BUCK_CHARGER + " 0";
+    private static final String BYPASS_DISABLED_VALUE =
+            BYPASS_CLIENT + " " + BUCK_CHARGER + " 1";
+    private static final String BYPASS_ENABLED_STATUS =
+            BUCK_CHARGER + " eff_client:" + BYPASS_CLIENT + " 0";
     private static final String BATTERY_TEMP_NODE = "/sys/class/power_supply/battery/temp";
     private static final String BATTERY_CAPACITY_NODE = "/sys/class/power_supply/battery/capacity";
 
@@ -40,9 +48,6 @@ public class ChargeUtils {
     private static final int MIN_BATTERY_CAPACITY = 20;
 
     private static final String PREF_BYPASS_CHARGE = "bypass_charge";
-
-    public static final int BYPASS_DISABLED = 0;
-    public static final int BYPASS_ENABLED = 1;
 
     private final Context context;
     private final SharedPreferences sharedPrefs;
@@ -54,7 +59,7 @@ public class ChargeUtils {
 
     public boolean isBypassChargeEnabled() {
         String value = FileUtils.readOneLine(BYPASS_CHARGE_NODE);
-        return "1".equals(value);
+        return value != null && BYPASS_ENABLED_STATUS.equals(value.trim());
     }
 
     public void enableBypassCharge(boolean enable) {
@@ -66,7 +71,8 @@ public class ChargeUtils {
             }
         }
 
-        if (FileUtils.writeLine(BYPASS_CHARGE_NODE, enable ? "1" : "0")) {
+        String value = enable ? BYPASS_ENABLED_VALUE : BYPASS_DISABLED_VALUE;
+        if (FileUtils.writeLine(BYPASS_CHARGE_NODE, value)) {
             sharedPrefs.edit().putBoolean(PREF_BYPASS_CHARGE, enable).apply();
         } else {
             Log.e(TAG, "Failed to write bypass charge status");
