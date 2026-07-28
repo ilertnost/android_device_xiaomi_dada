@@ -1,0 +1,3 @@
+# Audio HAL configuration consumed by stock Xiaomi and Qualcomm components.
+ro.miui.support_submix_multichannel u:object_r:audio_config_prop:s0 exact bool
+persist.bluetooth.dfs.enable u:object_r:bluetooth_config_prop:s0 exact bool
