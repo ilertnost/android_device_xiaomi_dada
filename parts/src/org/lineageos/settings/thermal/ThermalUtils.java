@@ -39,13 +39,14 @@ public final class ThermalUtils {
     protected static final int STATE_GAMING = 5;
     protected static final int STATE_STREAMING = 6;
     private static final String THERMAL_CONTROL = "thermal_control";
-    private static final String THERMAL_STATE_DEFAULT = "-1";
-    private static final String THERMAL_STATE_BENCHMARK = "10";
-    private static final String THERMAL_STATE_BROWSER = "11";
-    private static final String THERMAL_STATE_CAMERA = "12";
-    private static final String THERMAL_STATE_DIALER = "8";
-    private static final String THERMAL_STATE_GAMING = "9";
-    private static final String THERMAL_STATE_STREAMING = "14";
+    // Scenario IDs from the stock OS3 setting.xml used by dada-class devices.
+    private static final String THERMAL_STATE_DEFAULT = "0";
+    private static final String THERMAL_STATE_BENCHMARK = "6";
+    private static final String THERMAL_STATE_BROWSER = "7";
+    private static final String THERMAL_STATE_CAMERA = "15";
+    private static final String THERMAL_STATE_DIALER = "5";
+    private static final String THERMAL_STATE_GAMING = "18";
+    private static final String THERMAL_STATE_STREAMING = "11";
 
     private static final String THERMAL_BENCHMARK = "thermal.benchmark=";
     private static final String THERMAL_BROWSER = "thermal.browser=";
