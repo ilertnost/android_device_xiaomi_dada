@@ -1,6 +1,9 @@
 # Touch tuning through the modern Xiaomi TouchFeature AIDL HAL.
 hal_client_domain(devicesettings_app, hal_touchfeature_xiaomi)
 
+# Thermal profile control through the Qualcomm System Performance Manager HAL.
+hal_client_domain(devicesettings_app, vendor_hal_qspmhal)
+
 # Charge bypass and battery safety checks.
 allow devicesettings_app vendor_sysfs_xm_power:dir search;
 allow devicesettings_app vendor_sysfs_xm_power:file rw_file_perms;
