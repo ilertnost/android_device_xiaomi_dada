@@ -4,7 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+from os import path
+
 import extract_utils.tools
+
 from extract_utils.fixups_blob import (
     blob_fixup,
     blob_fixups_user_type,
@@ -21,6 +24,7 @@ from extract_utils.main import (
 from extract_utils.utils import run_cmd
 
 CAMERA_STOCK_RUNPATH = '/vendor/lib64/camera-stock'
+THERMAL_AES_KEY = 'thermalopenssl.h'.encode().hex()
 
 CAMERA_STOCK_LIBRARIES = (
     'android.hardware.graphics.allocator-V2-ndk.so',
@@ -86,6 +90,87 @@ def camera_stock_executable_fixup():
 
     return fixup
 
+
+def tune_thermal_normal(ctx, file, file_path, *args, tmp_dir=None, **kwargs):
+    assert tmp_dir is not None
+
+    decrypted_path = path.join(tmp_dir, 'thermal-normal.conf')
+
+    cipher_args = [
+        'openssl',
+        'enc',
+        '-aes-128-cbc',
+        '-K',
+        THERMAL_AES_KEY,
+        '-iv',
+        THERMAL_AES_KEY,
+    ]
+
+    run_cmd(cipher_args + ['-d', '-in', file_path, '-out', decrypted_path])
+
+    with open(decrypted_path, encoding='utf-8') as thermal_file:
+        config = thermal_file.read()
+
+    replacements = {
+        (
+            'target\t2745600\t2745600\t2400000\t2227200\t1785600\t'
+            '1785600\t1785600\t1785600\t1363200\t1363200\t1152000\t'
+            '1152000\t960000\t960000'
+        ): (
+            'target\t2745600\t2745600\t2745600\t2400000\t2227200\t'
+            '2227200\t1785600\t1785600\t1363200\t1363200\t1152000\t'
+            '1152000\t960000\t960000'
+        ),
+        (
+            'target\t2841600\t2841600\t2649600\t1958400\t1689600\t'
+            '1401600\t1401600\t1401600\t1401600\t1401600\t1401600\t'
+            '1401600\t1401600\t1017600\t1017600\t1017600'
+        ): (
+            'target\t2841600\t2841600\t2841600\t2649600\t1958400\t'
+            '1958400\t1689600\t1689600\t1689600\t1689600\t1689600\t'
+            '1401600\t1401600\t1017600\t1017600\t1017600'
+        ),
+        (
+            'target\t500\t700\t1100\t1200\t1200\t1400\t1400\t1400\t'
+            '1400\t1500'
+        ): (
+            'target\t500\t700\t1100\t1200\t1200\t1200\t1200\t1200\t'
+            '1400\t1500'
+        ),
+        (
+            'target\t0\t35000\t37300\t39500\t41500\t44000\t45500\t'
+            '46000\t46500'
+        ): (
+            'target\t0\t35000\t41000\t42000\t43000\t44000\t45500\t'
+            '46000\t46500'
+        ),
+        (
+            'max\t15600\t15600\t13500\t8000\t6000\t4500\t1000\t500\t'
+            '300'
+        ): (
+            'max\t15600\t15600\t13500\t10000\t8000\t6000\t1000\t500\t'
+            '300'
+        ),
+        (
+            'min\t15600\t15600\t4500\t5000\t4000\t2500\t1000\t500\t'
+            '300'
+        ): (
+            'min\t15600\t15600\t8000\t7000\t5000\t3500\t1000\t500\t'
+            '300'
+        ),
+    }
+
+    for old, new in replacements.items():
+        if config.count(old) != 1:
+            raise ValueError(f'Unexpected thermal-normal.conf contents: {old}')
+        config = config.replace(old, new)
+
+    with open(decrypted_path, 'w', encoding='utf-8', newline='') as thermal_file:
+        thermal_file.write(config)
+
+    run_cmd(cipher_args + ['-e', '-in', decrypted_path, '-out', file_path])
+
+
 namespace_imports = [
     'device/xiaomi/sm8750-common',
     'hardware/qcom-caf/sm8750',
@@ -95,6 +180,12 @@ namespace_imports = [
 ]
 
 blob_fixups: blob_fixups_user_type = {
+    # Keep the upper safety stages intact while allowing the device to sustain
+    # useful CPU and charging current through the 38-44 C surface-temperature
+    # range. The stock file is AES-CBC encrypted with mi_thermald's built-in
+    # key, so apply the change during extraction and restore its original
+    # encrypted format.
+    'odm/etc/thermal-normal.conf': blob_fixup().call(tune_thermal_normal),
     'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup(),
     # HyperOS suspends the face/QR AON pipelines before opening the full camera.
     # AOSP has no client for that handoff, so the pipelines retain SensorHw 1/2
