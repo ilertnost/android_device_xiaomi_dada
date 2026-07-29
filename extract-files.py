@@ -185,7 +185,11 @@ blob_fixups: blob_fixups_user_type = {
     # range. The stock file is AES-CBC encrypted with mi_thermald's built-in
     # key, so apply the change during extraction and restore its original
     # encrypted format.
-    'odm/etc/thermal-normal.conf': blob_fixup().call(tune_thermal_normal),
+    (
+        'odm/etc/thermal-gl-normal.conf',
+        'odm/etc/thermal-ind-normal.conf',
+        'odm/etc/thermal-normal.conf',
+    ): blob_fixup().call(tune_thermal_normal),
     'odm/bin/hw/vendor.qti.camera.provider-service_64': camera_stock_executable_fixup(),
     # HyperOS suspends the face/QR AON pipelines before opening the full camera.
     # AOSP has no client for that handoff, so the pipelines retain SensorHw 1/2
