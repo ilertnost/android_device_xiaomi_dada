@@ -30,6 +30,3 @@ ro.vendor.proxcal.factor=3.0
 
 # USB
 vendor.usb.product_string=Xiaomi 15
-
-# dada Ultra HDR STC diagnostic default
-persist.vendor.display.dada_sdr_stc_hdr=1

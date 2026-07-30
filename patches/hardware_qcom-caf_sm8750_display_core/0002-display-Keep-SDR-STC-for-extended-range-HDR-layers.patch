@@ -1,0 +1,122 @@
+From 54ce520430c47ab4a63ffa0bd93e930073a28d70 Mon Sep 17 00:00:00 2001
+From: turbo-boo <59400127+turbo-boo@users.noreply.github.com>
+Date: Fri, 17 Jul 2026 00:42:42 +0900
+Subject: [PATCH] display: Keep SDR STC for extended-range HDR layers
+
+FP16 extended-range layers, including Ultra HDR gain-map output, still need
+the HDR composition and brightness path. They do not use a PQ or HLG
+transfer function, however, and must not select a post-blend HDR STC
+profile intended for those EOTFs.
+
+Track PQ/HLG presence separately for STC profile selection while retaining
+the existing hdr_present flag for the rest of SDM.
+
+Change-Id: I44ace4d150c35587a323fb988d67520093a09497
+---
+ sdmclient/sdm_display.cpp           | 21 +++++++++++++++++----
+ sdmclient/sdm_display.h             |  1 +
+ sdmclient/sdm_display_builtin.cpp   |  2 +-
+ sdmclient/sdm_display_pluggable.cpp |  2 +-
+ 4 files changed, 20 insertions(+), 6 deletions(-)
+
+diff --git a/sdmclient/sdm_display.cpp b/sdmclient/sdm_display.cpp
+index 9bd18d5..cee8f46 100644
+--- a/sdmclient/sdm_display.cpp
++++ b/sdmclient/sdm_display.cpp
+@@ -797,11 +797,15 @@ DisplayError SDMDisplay::Deinit() {
+   return kErrorNone;
+ }
+ 
++static bool IsHdrEotfLayerPresent(Layer *layer) {
++  return layer->input_buffer.dataspace.colorPrimaries ==
++             QtiColorPrimaries_BT2020 &&
++         (layer->input_buffer.dataspace.transfer == QtiTransfer_SMPTE_ST2084 ||
++          layer->input_buffer.dataspace.transfer == QtiTransfer_HLG);
++}
++
+ static bool IsHDRLayerPresent(Layer *layer) {
+-  if (layer->input_buffer.dataspace.colorPrimaries ==
+-          QtiColorPrimaries_BT2020 &&
+-      (layer->input_buffer.dataspace.transfer == QtiTransfer_SMPTE_ST2084 ||
+-       layer->input_buffer.dataspace.transfer == QtiTransfer_HLG)) {
++  if (IsHdrEotfLayerPresent(layer)) {
+     return true;
+   } else if (IsExtendedRange(layer->input_buffer)) {
+     // Treat input format FP16 with extended range as HDR layer
+@@ -818,6 +822,7 @@ void SDMDisplay::BuildLayerStack() {
+   layer_stack_.flags.layer_id_support = true;
+   layer_stack_.solid_fill_enabled = solid_fill_enable_;
+   layer_stack_.tonemapper_active = false;
++  stc_hdr_present_ = false;
+   bool video_layer_updating = false;
+   bool ui_layer_updating = false;
+ 
+@@ -927,6 +932,12 @@ void SDMDisplay::BuildLayerStack() {
+       // Dont honor HDR when its handling is disabled
+       layer->input_buffer.flags.hdr = true;
+       layer_stack_.flags.hdr_present = true;
++      // FP16 extended-range layers are used for Ultra HDR gain-map output.
++      // Keep them in the HDR composition path, but do not select a PQ/HLG
++      // post-blend STC profile for their sRGB transfer function.
++      if (IsHdrEotfLayerPresent(layer)) {
++        stc_hdr_present_ = true;
++      }
+     }
+ 
+     if (game_supported_ && (sdm_layer->GetType() == kLayerGame) && !hdr_layer) {
+@@ -1054,6 +1065,7 @@ void SDMDisplay::BuildLayerStack() {
+   DLOGV_IF(kTagClient, "layer_stack_.client_incompatible : %d",
+            layer_stack_.client_incompatible);
+   SDMDebugHandler::ATRACE_INT("HDRPresent ", layer_stack_.flags.hdr_present ? 1 : 0);
++  SDMDebugHandler::ATRACE_INT("STCHDRPresent ", stc_hdr_present_ ? 1 : 0);
+   SDMDebugHandler::ATRACE_INT("FrontBufferPresent ",
+                               layer_stack_.flags.front_buffer_layer_present ? 1 : 0);
+ }
+@@ -1061,6 +1073,7 @@ void SDMDisplay::BuildLayerStack() {
+ void SDMDisplay::BuildSolidFillStack() {
+   layer_stack_ = LayerStack();
+   display_rect_ = LayerRect();
++  stc_hdr_present_ = false;
+ 
+   layer_stack_.layers.push_back(solid_fill_layer_);
+   layer_stack_.flags.geometry_changed = 1U;
+diff --git a/sdmclient/sdm_display.h b/sdmclient/sdm_display.h
+index 391292a..804fd44 100644
+--- a/sdmclient/sdm_display.h
++++ b/sdmclient/sdm_display.h
+@@ -649,6 +649,7 @@ public:
+   uint32_t num_configs_ = 0;
+   int disable_hdr_handling_ = 0;  // disables HDR handling.
+   int disable_sdr_histogram_ = 0; // disables handling of SDR histogram data.
++  bool stc_hdr_present_ = false;
+   bool pending_commit_ = false;
+ #ifdef XIAOMI_CWB_NOTIFY_SENSOR
+   android::sp<clientRGBNotifier> client_rgb_notifier_;
+diff --git a/sdmclient/sdm_display_builtin.cpp b/sdmclient/sdm_display_builtin.cpp
+index 59b3fad..fc6d1b7 100644
+--- a/sdmclient/sdm_display_builtin.cpp
++++ b/sdmclient/sdm_display_builtin.cpp
+@@ -256,7 +256,7 @@ DisplayError SDMDisplayBuiltIn::PreValidateDisplay(bool *exit_validate) {
+ 
+   // Apply current Color Mode and Render Intent.
+   if (color_mode_->ApplyCurrentColorModeWithRenderIntent(
+-          static_cast<bool>(layer_stack_.flags.hdr_present)) != kErrorNone) {
++          stc_hdr_present_) != kErrorNone) {
+     // Fallback to GPU Composition, if Color Mode can't be applied.
+     MarkLayersForClientComposition();
+   }
+diff --git a/sdmclient/sdm_display_pluggable.cpp b/sdmclient/sdm_display_pluggable.cpp
+index 7ba893a..f2ea076 100644
+--- a/sdmclient/sdm_display_pluggable.cpp
++++ b/sdmclient/sdm_display_pluggable.cpp
+@@ -154,7 +154,7 @@ DisplayError SDMDisplayPluggable::PreValidateDisplay(bool *exit_validate) {
+ 
+   // Apply current Color Mode and Render Intent.
+   status = color_mode_->ApplyCurrentColorModeWithRenderIntent(
+-      static_cast<bool>(layer_stack_.flags.hdr_present));
++      stc_hdr_present_);
+   if (status != kErrorNone || has_color_tranform_) {
+     // Fallback to GPU Composition if Color Mode can't be applied or if a color
+     // tranform needs to be applied.
+-- 
+2.43.0
