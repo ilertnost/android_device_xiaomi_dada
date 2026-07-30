@@ -20,6 +20,12 @@ $(call inherit-product, device/xiaomi/dada-miuicamera/device.mk)
 PRODUCT_PACKAGES += \
     XiaomiParts
 
+# Android Virtualization Framework
+# Stock pvmfw cannot verify the AVF remote-attestation Service VM shipped by
+# the platform. Keep AVF enabled, but do not attempt unsupported AVF RKP.
+PRODUCT_SYSTEM_PROPERTIES += \
+    avf.remote_attestation.enabled=false
+
 # The stock camera HAL directly loads the frozen sensors AIDL V2 while the
 # platform sensorservice uses V3.
 PRODUCT_PACKAGES += \
