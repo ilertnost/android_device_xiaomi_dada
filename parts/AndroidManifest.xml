@@ -293,6 +293,40 @@
                 android:name="com.android.settings.summary"
                 android:resource="@string/dc_dimming_enable_summary" />
         </activity>
+
+        <!-- Edge filter settings activity -->
+        <activity
+            android:name=".edgefilter.EdgeFilterSettingsActivity"
+            android:label="@string/edge_filter_title"
+            android:exported="true"
+            android:theme="@style/Theme.SubSettingsBase_v31">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.display" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/edge_filter_summary" />
+        </activity>
+
+        <!-- Cloud mode settings activity -->
+        <activity
+            android:name=".cloudmode.CloudModeSettingsActivity"
+            android:label="@string/cloud_mode_title"
+            android:exported="true"
+            android:theme="@style/Theme.SubSettingsBase_v31">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.display" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/cloud_mode_summary" />
+        </activity>
     </application>
 
 </manifest>

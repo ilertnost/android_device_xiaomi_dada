@@ -26,8 +26,10 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
 import org.lineageos.settings.doze.PocketService;
+import org.lineageos.settings.cloudmode.CloudModeUtils;
 import org.lineageos.settings.dcdimming.DcDimmingUtils;
 import org.lineageos.settings.dirac.DiracUtils;
+import org.lineageos.settings.edgefilter.EdgeFilterUtils;
 import org.lineageos.settings.thermal.ThermalUtils;
 import org.lineageos.settings.refreshrate.RefreshUtils;
 
@@ -55,5 +57,11 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         // DC Dimming
         boolean dcDimmingEnabled = sharedPrefs.getBoolean(DC_DIMMING_KEY, false);
         DcDimmingUtils.setEnabled(dcDimmingEnabled);
+
+        // Edge mis-touch protection
+        EdgeFilterUtils.applyLater(context);
+
+        // Wet touch and glove cloud modes
+        CloudModeUtils.applyLater(context);
     }
 }

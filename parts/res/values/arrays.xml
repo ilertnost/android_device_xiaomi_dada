@@ -202,6 +202,14 @@
         <item>stacked</item>
     </string-array>
 
+    <!-- Edge filter levels -->
+    <string-array name="edge_filter_levels" translatable="false">
+        <item>@string/edge_filter_level_off</item>
+        <item>@string/edge_filter_level_low</item>
+        <item>@string/edge_filter_level_medium</item>
+        <item>@string/edge_filter_level_high</item>
+    </string-array>
+
     <!-- Long press timeouts -->
     <string-array name="game_bar_longpress_entries">
         <item>@string/game_bar_longpress_1s</item>

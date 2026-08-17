@@ -309,4 +309,23 @@
     <string name="dc_dimming_enable_summary">Reduces eye strain in low light conditions</string>
     <string name="dc_dimming_enable_summary_not_supported">DC Dimming is currently not supported by the kernel</string>
     <string name="dc_dimming_disable_hbm_first">Disable High Brightness Mode to enable DC Dimming</string>
+
+    <!-- Edge filter settings -->
+    <string name="edge_filter_title">Edge mis-touch protection</string>
+    <string name="edge_filter_summary">Filter accidental touches on the curved display edges</string>
+    <string name="edge_filter_enable_title">Edge mis-touch protection</string>
+    <string name="edge_filter_enable_summary">Reject touches near the display edges to prevent accidental input</string>
+    <string name="edge_filter_level_title">Protection level</string>
+    <string name="edge_filter_level_off">Off</string>
+    <string name="edge_filter_level_low">Low</string>
+    <string name="edge_filter_level_medium">Medium</string>
+    <string name="edge_filter_level_high">High</string>
+
+    <!-- Cloud mode settings -->
+    <string name="cloud_mode_title">Touch response modes</string>
+    <string name="cloud_mode_summary">Improve touch handling in special conditions</string>
+    <string name="cloud_water_proof_title">Wet touch protection</string>
+    <string name="cloud_water_proof_summary">Improve touch response while the screen is wet</string>
+    <string name="cloud_glove_title">Glove mode</string>
+    <string name="cloud_glove_summary">Improve touch detection while wearing gloves</string>
 </resources>

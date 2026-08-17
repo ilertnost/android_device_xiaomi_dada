@@ -16,4 +16,6 @@
     <integer name="smoothness_default">0</integer>
     <integer name="smoothness_min">0</integer>
     <integer name="smoothness_max">3</integer>
+    <!-- Edge filter default level (stock-compatible) -->
+    <integer name="edge_filter_level_default">2</integer>
 </resources>

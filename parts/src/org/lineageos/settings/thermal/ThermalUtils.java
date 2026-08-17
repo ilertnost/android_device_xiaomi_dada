@@ -26,6 +26,7 @@ import android.view.WindowManager;
 
 import androidx.preference.PreferenceManager;
 
+import org.lineageos.settings.edgefilter.EdgeFilterUtils;
 import org.lineageos.settings.utils.FileUtils;
 import org.lineageos.settings.utils.TouchFeatureUtils;
 
@@ -59,10 +60,12 @@ public final class ThermalUtils {
 
     private boolean mTouchModeChanged;
 
+    private Context mContext;
     private Display mDisplay;
     private SharedPreferences mSharedPrefs;
 
     protected ThermalUtils(Context context) {
+        mContext = context;
         mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         WindowManager mWindowManager = context.getSystemService(WindowManager.class);
@@ -238,7 +241,7 @@ public final class ThermalUtils {
         TouchFeatureUtils.resetMode(Constants.MODE_TOUCH_ACTIVE_MODE);
         TouchFeatureUtils.resetMode(Constants.MODE_TOUCH_UP_THRESHOLD);
         TouchFeatureUtils.resetMode(Constants.MODE_TOUCH_TOLERANCE);
-        TouchFeatureUtils.resetMode(Constants.MODE_TOUCH_EDGE_FILTER);
+        EdgeFilterUtils.apply(mContext);
         TouchFeatureUtils.resetMode(Constants.MODE_TOUCH_ROTATION);
 
         mTouchModeChanged = false;
