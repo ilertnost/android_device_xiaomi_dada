@@ -1,0 +1,96 @@
+From 70f8736e9cc70987acb0840e5b5df6004b36dc5e Mon Sep 17 00:00:00 2001
+From: turbo-boo <59400127+turbo-boo@users.noreply.github.com>
+Date: Mon, 13 Jul 2026 22:25:38 +0900
+Subject: [PATCH 07/14] fingerprint: expose UDFPS operation lifecycle
+
+
+diff --git a/aidl/fingerprint/Session.cpp b/aidl/fingerprint/Session.cpp
+index 4c7f6a0..c8101bd 100644
+--- a/aidl/fingerprint/Session.cpp
++++ b/aidl/fingerprint/Session.cpp
+@@ -63,12 +63,18 @@ ndk::ScopedAStatus Session::enroll(const HardwareAuthToken& hat,
+                                    std::shared_ptr<ICancellationSignal>* out) {
+     hw_auth_token_t authToken;
+     translate(hat, authToken);
++    if (mUdfpsHandler) {
++        mUdfpsHandler->onEnrollStarted();
++    }
+ #ifndef IMPL_V2
+     int error = mDevice->enroll(mDevice, &authToken, mUserId, 60);
+ #else
+     int error = mDevice->enroll(mDevice, &authToken);
+ #endif
+     if (error) {
++        if (mUdfpsHandler) {
++            mUdfpsHandler->onError();
++        }
+         ALOGE("enroll failed: %d", error);
+         mCb->onError(Error::UNABLE_TO_PROCESS, error);
+     }
+@@ -80,12 +86,18 @@ ndk::ScopedAStatus Session::enroll(const HardwareAuthToken& hat,
+ ndk::ScopedAStatus Session::authenticate(int64_t operationId,
+                                          std::shared_ptr<ICancellationSignal>* out) {
+     checkSensorLockout();
++    if (mUdfpsHandler) {
++        mUdfpsHandler->onAuthenticateStarted();
++    }
+ #ifndef IMPL_V2
+     int error = mDevice->authenticate(mDevice, operationId, mUserId);
+ #else
+     int error = mDevice->authenticate(mDevice, operationId);
+ #endif
+     if (error) {
++        if (mUdfpsHandler) {
++            mUdfpsHandler->onError();
++        }
+         ALOGE("authenticate failed: %d", error);
+         mCb->onError(Error::UNABLE_TO_PROCESS, error);
+     }
+@@ -369,6 +381,9 @@ void Session::notify(const fingerprint_msg_t* msg) {
+             int32_t vendorCode = 0;
+             Error result = VendorErrorFilter(msg->data.error, &vendorCode);
+             ALOGD("onError(%hhd, %d)", result, vendorCode);
++            if (mUdfpsHandler) {
++                mUdfpsHandler->onError();
++            }
+             mCb->onError(result, vendorCode);
+         } break;
+         case FINGERPRINT_ACQUIRED: {
+@@ -383,8 +398,8 @@ void Session::notify(const fingerprint_msg_t* msg) {
+             // udfps display mode on vendor acquired messages but our sensors send a
+             // vendor message during processing...
+             if (result != AcquiredInfo::VENDOR ||
+-                (mUdfpsHandler && mUdfpsHandler->shouldForwardAcquired(
+-                                          static_cast<int32_t>(result), vendorCode))) {
++                (mUdfpsHandler &&
++                 mUdfpsHandler->shouldForwardAcquired(static_cast<int32_t>(result), vendorCode))) {
+                 mCb->onAcquired(result, vendorCode);
+             }
+         } break;
+@@ -398,6 +413,9 @@ void Session::notify(const fingerprint_msg_t* msg) {
+ #endif
+             mCb->onEnrollmentProgress(msg->data.enroll.finger.fid,
+                                       msg->data.enroll.samples_remaining);
++            if (mUdfpsHandler) {
++                mUdfpsHandler->onEnrollmentProgress(msg->data.enroll.samples_remaining);
++            }
+ 
+         } break;
+         case FINGERPRINT_TEMPLATE_REMOVED: {
+diff --git a/fingerprint/include/UdfpsHandler.h b/fingerprint/include/UdfpsHandler.h
+index 1bc7932..29da290 100644
+--- a/fingerprint/include/UdfpsHandler.h
++++ b/fingerprint/include/UdfpsHandler.h
+@@ -21,8 +21,12 @@ class UdfpsHandler {
+     virtual void onFingerDown(uint32_t x, uint32_t y, float minor, float major) {};
+     virtual void onFingerUp() {};
+     virtual void onUiReady() {};
++    virtual void onEnrollStarted() {};
++    virtual void onAuthenticateStarted() {};
+ 
+     virtual void onAcquired(int32_t result, int32_t vendorCode) {};
++    virtual void onEnrollmentProgress(uint32_t remaining) {};
++    virtual void onError() {};
+     virtual bool shouldForwardAcquired(int32_t result, int32_t vendorCode) { return false; };
+     virtual void onAuthenticationSucceeded() {};
+     virtual void onAuthenticationFailed() {};
