@@ -1,0 +1,36 @@
+From a9ff44046fe338e6ec7114fd321f7f8b834e0ba8 Mon Sep 17 00:00:00 2001
+From: turbo-boo <59400127+turbo-boo@users.noreply.github.com>
+Date: Fri, 10 Jul 2026 16:36:04 +0900
+Subject: [PATCH 02/14] fingerprint: reject sessions without a backend
+
+
+diff --git a/aidl/fingerprint/Fingerprint.cpp b/aidl/fingerprint/Fingerprint.cpp
+index 4465761..ef4172b 100644
+--- a/aidl/fingerprint/Fingerprint.cpp
++++ b/aidl/fingerprint/Fingerprint.cpp
+@@ -43,7 +43,12 @@ static const fingerprint_hal_t kModules[] = {
+ static const uint16_t kVersion = HARDWARE_MODULE_API_VERSION(2, 1);
+ static Fingerprint* sInstance;
+ 
+-Fingerprint::Fingerprint(std::shared_ptr<FingerprintConfig> config) : mConfig(std::move(config)) {
++Fingerprint::Fingerprint(std::shared_ptr<FingerprintConfig> config)
++    : mConfig(std::move(config)),
++      mSensorType(FingerprintSensorType::UNKNOWN),
++      mDevice(nullptr),
++      mUdfpsHandlerFactory(nullptr),
++      mUdfpsHandler(nullptr) {
+     sInstance = this;  // keep track of the most recent instance
+ 
+     if (mDevice) {
+@@ -245,6 +250,11 @@ ndk::ScopedAStatus Fingerprint::createSession(int32_t /*sensorId*/, int32_t user
+                                               std::shared_ptr<ISession>* out) {
+     CHECK(mSession == nullptr || mSession->isClosed()) << "Open session already exists!";
+ 
++    if (mDevice == nullptr) {
++        ALOGE("Cannot create session without a fingerprint backend");
++        return ndk::ScopedAStatus::fromExceptionCode(EX_ILLEGAL_STATE);
++    }
++
+     mSession = SharedRefBase::make<Session>(mDevice, mUdfpsHandler, userId, cb, mLockoutTracker);
+     *out = mSession;
+ 
