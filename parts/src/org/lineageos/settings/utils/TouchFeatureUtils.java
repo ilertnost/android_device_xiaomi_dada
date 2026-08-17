@@ -30,6 +30,9 @@ public final class TouchFeatureUtils {
 
     private static final int TRANSACTION_MODE_RESET = IBinder.FIRST_CALL_TRANSACTION + 6;
     private static final int TRANSACTION_SET_MODE_VALUE = IBinder.FIRST_CALL_TRANSACTION + 8;
+    // Xiaomi's stock TouchService calls its wrapper setTouchMode(), but the
+    // stable V1 AIDL service implements it through setModeValue (transaction 9).
+    private static final int TRANSACTION_SET_TOUCH_MODE = TRANSACTION_SET_MODE_VALUE;
     private static final int TOUCH_ID_PRIMARY = 0;
 
     private TouchFeatureUtils() {}
@@ -40,6 +43,10 @@ public final class TouchFeatureUtils {
 
     public static boolean setModeValue(int mode, int value) {
         return transact(TRANSACTION_SET_MODE_VALUE, mode, value, true);
+    }
+
+    public static boolean setTouchMode(int mode, int value) {
+        return transact(TRANSACTION_SET_TOUCH_MODE, mode, value, true);
     }
 
     private static boolean transact(int transaction, int mode, int value, boolean hasValue) {
