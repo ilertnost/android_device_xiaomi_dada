@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Screen attention provider. The Settings preference that controls adaptive sleep
+  is only usable when the attention service package holds the camera permission,
+  because the provider implements the check through its own camera session. The
+  Google Android System Intelligence package requests the permission but nothing
+  grants it on a build that is not signed with Google's platform key, so grant it
+  here.
+-->
+<exceptions>
+    <exception package="com.google.android.as">
+        <permission name="android.permission.CAMERA" fixed="false"/>
+    </exception>
+</exceptions>
