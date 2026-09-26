@@ -16,22 +16,23 @@
 
 package org.lineageos.settings.memc;
 
-import android.content.Context;
 import android.os.SystemProperties;
 import android.util.Log;
 
-import androidx.preference.PreferenceManager;
-
 /**
- * Video enhancement is a single mutually exclusive mode (off, memc, aie,
- * ais) expressed as a four-property truth table on the debug.media.video.*
- * properties. Exactly one mode is written at a time; off clears them all.
+ * Video enhancement is a single mutually exclusive mode (off, memc, aie, ais)
+ * held in the persist.vendor.media.video.mode property.
+ *
+ * The media stack only reads the volatile debug.media.video.* toggles, which a
+ * reboot clears. init derives them from this property through the
+ * on property: blocks in init.target.rc, so they are in place before any media
+ * process can read them and the choice itself survives on its own.
  */
 public final class MemcUtils {
 
     private static final String TAG = "MemcUtils";
 
-    /** The single preference key holding the selected mode. */
+    /** The preference key of the mode list. */
     public static final String KEY_MODE = "memc_mode";
 
     public static final String MODE_OFF = "off";
@@ -39,12 +40,8 @@ public final class MemcUtils {
     public static final String MODE_AIE = "aie";
     public static final String MODE_AIS = "ais";
 
-    private static final String PROP_FRC = "debug.media.video.frc";
-    private static final String PROP_VPP = "debug.media.video.vpp";
-    private static final String PROP_VE = "debug.media.video.ve";
-    private static final String PROP_AIS = "debug.media.video.ais";
-
-    private static final boolean DEFAULT_ON = false;
+    /** Persisted mode; init expands it into the debug.media.video.* toggles. */
+    private static final String PROP_MODE = "persist.vendor.media.video.mode";
 
     private MemcUtils() {}
 
@@ -53,51 +50,26 @@ public final class MemcUtils {
                 || MODE_AIE.equals(mode) || MODE_AIS.equals(mode);
     }
 
-    /**
-     * The properties, not the stored preference, are what the media stack
-     * acts on, so they are authoritative whenever they are available. A
-     * combination that matches no valid mode reports off instead of
-     * pretending a mode is active.
-     */
+    /** The stored mode is the user's choice; anything else reports off. */
     public static String getMode() {
-        final boolean frc = SystemProperties.getBoolean(PROP_FRC, DEFAULT_ON);
-        final boolean vpp = SystemProperties.getBoolean(PROP_VPP, DEFAULT_ON);
-        final boolean ve = SystemProperties.getBoolean(PROP_VE, DEFAULT_ON);
-        final boolean ais = SystemProperties.getBoolean(PROP_AIS, DEFAULT_ON);
-
-        if (frc) {
-            return !vpp && !ve && !ais ? MODE_MEMC : MODE_OFF;
-        }
-        if (vpp && ve && !ais) {
-            return MODE_AIE;
-        }
-        if (vpp && !ve && ais) {
-            return MODE_AIS;
-        }
-        return MODE_OFF;
+        final String mode = SystemProperties.get(PROP_MODE, MODE_OFF);
+        return isValidMode(mode) ? mode : MODE_OFF;
     }
 
     /**
-     * Write all four properties for exactly one mode (off clears every
-     * property), then verify by reading them back. Returns false for an
-     * invalid value, a write failure, or a mismatched readback; callers
-     * must not persist the mode in that case.
+     * Store the mode, verified by reading it back. Only the property is
+     * written: init turns it into the toggles, now and on every later boot.
+     * Returns false for an invalid value or a failed write, in which case
+     * callers must not show the mode as applied.
      */
     public static boolean setMode(String mode) {
         if (!isValidMode(mode)) {
             return false;
         }
-        final boolean frc = MODE_MEMC.equals(mode);
-        final boolean vpp = MODE_AIE.equals(mode) || MODE_AIS.equals(mode);
-        final boolean ve = MODE_AIE.equals(mode);
-        final boolean ais = MODE_AIS.equals(mode);
         try {
-            SystemProperties.set(PROP_FRC, toProp(frc));
-            SystemProperties.set(PROP_VPP, toProp(vpp));
-            SystemProperties.set(PROP_VE, toProp(ve));
-            SystemProperties.set(PROP_AIS, toProp(ais));
+            SystemProperties.set(PROP_MODE, mode);
         } catch (RuntimeException e) {
-            Log.e(TAG, "Failed to set video enhancement mode " + mode, e);
+            Log.e(TAG, "Failed to store video enhancement mode " + mode, e);
             return false;
         }
         final String applied = getMode();
@@ -107,28 +79,5 @@ public final class MemcUtils {
             return false;
         }
         return true;
-    }
-
-    public static void persistMode(Context context, String mode) {
-        if (!isValidMode(mode)) {
-            return;
-        }
-        PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putString(KEY_MODE, mode).apply();
-    }
-
-    /**
-     * Restore the user's choice. The properties are volatile (they are not
-     * persisted properties), while the stored mode survives reboots.
-     */
-    public static boolean apply(Context context) {
-        final String saved = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(KEY_MODE, MODE_OFF);
-        return setMode(isValidMode(saved) ? saved : MODE_OFF);
-    }
-
-    private static String toProp(boolean value) {
-        return value ? "true" : "false";
     }
 }

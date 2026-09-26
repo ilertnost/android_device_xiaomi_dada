@@ -42,9 +42,8 @@ public class MemcSettingsFragment extends SettingsBasePreferenceFragment impleme
     @Override
     public void onResume() {
         super.onResume();
-        // Reflect the properties, which is what the media stack acts on,
-        // without touching the stored choice: the properties are volatile and
-        // may have been reset by a reboot or changed underneath us. The
+        // Reflect the stored mode: the toggles init derives from it are not a
+        // reliable source once a media process has cached them, and the
         // preference is non-persistent, so this only updates the display.
         mModePreference.setValue(MemcUtils.getMode());
     }
@@ -55,14 +54,14 @@ public class MemcSettingsFragment extends SettingsBasePreferenceFragment impleme
             return true;
         }
         final String mode = (String) newValue;
-        // Apply first; setMode rejects invalid values and verifies the
-        // properties by reading them back.
+        // Store first; setMode rejects invalid values and verifies the stored
+        // value by reading it back. init turns it into the toggles the media
+        // stack reads.
         if (!MemcUtils.setMode(mode)) {
-            // Roll the selection back to the actual property state.
+            // Roll the selection back to the stored mode.
             mModePreference.setValue(MemcUtils.getMode());
             return false;
         }
-        MemcUtils.persistMode(getContext(), mode);
         return true;
     }
 }
