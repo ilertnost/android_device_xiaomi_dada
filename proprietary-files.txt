@@ -232,19 +232,7 @@ odm/lib64/rfs/dsp/libbitml_nsp_skel.so
 odm/lib64/rfs/dsp/libhdr_skel.so
 odm/lib64/rfs/dsp/libqsegnetengine_dsp_skel.so
 
-# Audio (Config)
-odm/etc/audio/sku_sun/mixer_paths_overlay_dynamic.xml
-odm/etc/audio/sku_sun/mixer_paths_overlay_static.xml
-odm/etc/audio/sku_sun/mixer_paths_sun_mtp.xml
-odm/etc/audio/sku_sun/resourcemanager_sun_mtp.xml
-
 # Audio firmware
-odm/firmware/B-cs35l43-delta-music-spk-prot.bin
-odm/firmware/B-cs35l43-delta-voice-spk-prot.bin
-odm/firmware/B-cs35l43-dsp1-spk-prot.bin
-odm/firmware/T-cs35l43-delta-music-spk-prot.bin
-odm/firmware/T-cs35l43-delta-voice-spk-prot.bin
-odm/firmware/T-cs35l43-dsp1-spk-prot.bin
 odm/firmware/cs35l43-dsp1-spk-prot.wmfw
 
 # Camera Resources
@@ -2174,7 +2162,6 @@ odm/firmware/dada_sunny_s5kjn5_bu24619_tele3x_i_ois_lsm6dsv.mem
 odm/firmware/dada_sunny_s5kjn5_bu24619_tele3x_i_ois_lsm6dsv.prog
 
 # Displayfeature (configs)
-odm/etc/df_default.xml
 odm/etc/mdss_dsi_o3_36_02_0b_dsc_cmd_mi.xml
 odm/etc/mdss_dsi_o3_42_0d_0a_dsc_cmd_mi.xml
 product/etc/displayconfig/common_multi_factor_thermal_brightness_control.xml
@@ -2182,10 +2169,6 @@ product/etc/displayconfig/display_id_4630946682710401939.xml
 product/etc/displayconfig/display_id_4630947212918452371.xml
 product/etc/displayconfig/multi_factor_thermal_brightness_control.xml
 product/etc/displayconfig/rhythmic_app_category_list_backup.xml
-vendor/etc/displayconfig/display_id_4630946916234099603.xml
-vendor/etc/displayconfig/display_id_4630947039571902850.xml
-vendor/etc/displayconfig/display_id_4630947039571902851.xml
-vendor/etc/displayconfig/display_id_4630947075271898515.xml
 vendor/etc/displayconfig/display_layout_configuration.xml
 odm/etc/disp0/mdss_dsi_o3_36_02_0b_dsc_cmd/cct_pcc.txt
 odm/etc/disp0/mdss_dsi_o3_36_02_0b_dsc_cmd/clstc/clstc_gc_0.txt
@@ -2336,91 +2319,6 @@ mi_ext/product/priv-app/EuiccGoogle_arm64/EuiccGoogle_arm64.apk:product/priv-app
 # RIL
 odm/etc/me_config.xml
 
-# Sensors
-odm/etc/sensors/config/5cm_blue.png
-odm/etc/sensors/config/5cm_gray.png
-odm/etc/sensors/config/5cm_green.png
-odm/etc/sensors/config/5cm_red.png
-odm/etc/sensors/config/5cm_white.png
-odm/etc/sensors/config/ak7323.json
-odm/etc/sensors/config/ak991x_dri_0.json
-odm/etc/sensors/config/center_cali_all.png
-odm/etc/sensors/config/center_cali_x.png
-odm/etc/sensors/config/center_cali_y.png
-odm/etc/sensors/config/chre_dynamic_sensors.json
-odm/etc/sensors/config/json.lst
-odm/etc/sensors/config/lightSensorConfig.json
-odm/etc/sensors/config/lightSensorConfigSec.json
-odm/etc/sensors/config/pakala_ccd_base.json
-odm/etc/sensors/config/qsh_camera_aon_front_i_1.json
-odm/etc/sensors/config/qsh_camera_aon_front_ii_1.json
-odm/etc/sensors/config/qsh_camera_aon_rear_i_2.json
-odm/etc/sensors/config/qsh_camera_aon_rear_ii_2.json
-odm/etc/sensors/config/qsh_camera_common.json
-odm/etc/sensors/config/qsh_camera_imx688_6_actuator.json
-odm/etc/sensors/config/qsh_camera_imx688_6.json
-odm/etc/sensors/config/qsh_camera_ov32c4c_4.json
-odm/etc/sensors/config/sm8750_ak7323.json
-odm/etc/sensors/config/sm8750_ak991x_0.json
-odm/etc/sensors/config/sm8750_bmi26x_0.json
-odm/etc/sensors/config/sm8750_bmp5_0.json
-odm/etc/sensors/config/sm8750_default_sensors.json
-odm/etc/sensors/config/sm8750_dynamic_sensors_template.json
-odm/etc/sensors/config/sm8750_dynamic_sensors.json
-odm/etc/sensors/config/sm8750_irq.json
-odm/etc/sensors/config/sm8750_lsm6dsv_0.json
-odm/etc/sensors/config/sm8750_power_0.json
-odm/etc/sensors/config/sm8750_spl07_0.json
-odm/etc/sensors/config/sm8750_sx937x_0.json
-odm/etc/sensors/config/sm8750_tcs3408.json
-odm/etc/sensors/config/sm8750_tcs3720_fb.json
-odm/etc/sensors/config/sm8750_vl53l1_tof_0.json
-odm/etc/sensors/config/sns_amd.json
-odm/etc/sensors/config/sns_aod.json
-odm/etc/sensors/config/sns_aont.json
-odm/etc/sensors/config/sns_ccd_v1_0_amd.json
-odm/etc/sensors/config/sns_ccd_v3_1_walk.json
-odm/etc/sensors/config/sns_ccd_v4_0_sensors.json
-odm/etc/sensors/config/sns_ccd_v5_0.json
-odm/etc/sensors/config/sns_ccd_v5_1_te_cd_regs.json
-odm/etc/sensors/config/sns_ccd_v6_0_sensors.json
-odm/etc/sensors/config/sns_ccd_v6_0_te_cd_regs.json
-odm/etc/sensors/config/sns_ccd_v6_0.json
-odm/etc/sensors/config/sns_cm.json
-odm/etc/sensors/config/sns_collision_detection.json
-odm/etc/sensors/config/sns_dae.json
-odm/etc/sensors/config/sns_dbtap.json
-odm/etc/sensors/config/sns_device_orient.json
-odm/etc/sensors/config/sns_diag_filter.json
-odm/etc/sensors/config/sns_direct_channel.json
-odm/etc/sensors/config/sns_distance_bound.json
-odm/etc/sensors/config/sns_dpc.json
-odm/etc/sensors/config/sns_flight_md.json
-odm/etc/sensors/config/sns_fmv.json
-odm/etc/sensors/config/sns_gyro_cal_dynamic.json
-odm/etc/sensors/config/sns_gyro_cal.json
-odm/etc/sensors/config/sns_healthy_use_of_mobile.json
-odm/etc/sensors/config/sns_mag_cal.json
-odm/etc/sensors/config/sns_nonui.json
-odm/etc/sensors/config/sns_oem_pocket.json
-odm/etc/sensors/config/sns_offbody_detect_phone.json
-odm/etc/sensors/config/sns_pedometer.json
-odm/etc/sensors/config/sns_pointing_light_source.json
-odm/etc/sensors/config/sns_rmd.json
-odm/etc/sensors/config/sns_rotv.json
-odm/etc/sensors/config/sns_sar_algo_1.json
-odm/etc/sensors/config/sns_sar_algo.json
-odm/etc/sensors/config/sns_screen_down.json
-odm/etc/sensors/config/sns_smd.json
-odm/etc/sensors/config/sns_tilt_to_wake.json
-odm/etc/sensors/config/sns_tilt.json
-odm/etc/sensors/config/sns_transport_ppe.json
-odm/etc/sensors/config/sx937x_0.json
-odm/etc/sensors/config/sx937x_reg_0.json
-odm/etc/sensors/config/tcs3408.json
-odm/etc/sensors/config/vi5300_tof_0.json
-odm/etc/sensors/config/vl53l1_tof_0.json
-
 # Thermal config
 odm/etc/thermal-4k.conf
 odm/etc/thermal-arvr.conf
@@ -2528,7 +2426,3 @@ odm/firmware/water_check.tflite
 # Vibrator
 odm/lib64/libcom.xiaomi.ionutils.so
 odm/lib64/libmicamera_fps_checker.so
-
-# ACDB (Fluence)
-odm/etc/acdbdata/Fluence/Fluence_acdb_cal.acdb
-odm/etc/acdbdata/Fluence/Fluence_workspaceFileXml.qwsp
