@@ -39,4 +39,12 @@ public final class DcDimmingUtils {
             return false;
         }
     }
+
+    /**
+     * DC dimming is implemented by the vendor display stack, which only
+     * defines the control property on ODM builds that back the feature.
+     */
+    public static boolean isSupported() {
+        return !SystemProperties.get(DC_DIMMING_PROPERTY, "").isEmpty();
+    }
 }

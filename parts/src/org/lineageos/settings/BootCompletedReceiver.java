@@ -27,6 +27,8 @@ import androidx.preference.PreferenceManager;
 
 import org.lineageos.settings.doze.PocketService;
 import org.lineageos.settings.cloudmode.CloudModeUtils;
+import org.lineageos.settings.dcdimming.DcDimmingSettingsActivity;
+import org.lineageos.settings.dcdimming.DcDimmingTileService;
 import org.lineageos.settings.dcdimming.DcDimmingUtils;
 import org.lineageos.settings.edgefilter.EdgeFilterUtils;
 import org.lineageos.settings.hbm.AutoHBMService;
@@ -57,6 +59,11 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         // DC Dimming
         boolean dcDimmingEnabled = sharedPrefs.getBoolean(DC_DIMMING_KEY, false);
         DcDimmingUtils.setEnabled(dcDimmingEnabled);
+
+        // DC dimming UI, only where the vendor display stack backs it
+        boolean dcDimmingSupported = DcDimmingUtils.isSupported();
+        ComponentUtils.toggleComponent(context, DcDimmingSettingsActivity.class, dcDimmingSupported);
+        ComponentUtils.toggleComponent(context, DcDimmingTileService.class, dcDimmingSupported);
 
         // Edge mis-touch protection
         EdgeFilterUtils.applyLater(context);
