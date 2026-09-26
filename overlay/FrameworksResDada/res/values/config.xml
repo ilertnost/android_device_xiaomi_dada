@@ -536,5 +536,8 @@
     <string name="config_systemAudioIntelligence" translatable="false">com.google.android.as</string>
     <!-- Component providing system-wide Live Caption transcription. -->
     <string name="config_defaultSystemCaptionsManagerService" translatable="false">com.google.android.as/com.google.android.apps.miphone.aiai.captions.SystemCaptionsManagerService</string>
+    <!-- Screen attention -->
+    <bool name="config_adaptive_sleep_available">true</bool>
+    <string name="config_defaultAttentionService" translatable="false">com.google.android.as/com.google.android.apps.miphone.aiai.attention.service.AiAiAttentionService</string>
 
 </resources>
