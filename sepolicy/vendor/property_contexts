@@ -7,3 +7,7 @@
 # with a blanket get_prop(domain, ...) grant in the Qualcomm vendor policy.
 ro.vendor.media.video.frc.support u:object_r:vendor_public_vendor_default_prop:s0
 ro.vendor.media.video.vpp.support u:object_r:vendor_public_vendor_default_prop:s0
+
+# Video enhancement mode, persisted across reboots. init turns it into the
+# volatile debug.media.video.* toggles the media stack reads.
+persist.vendor.media.video.mode u:object_r:vendor_video_enhancement_prop:s0

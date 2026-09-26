@@ -16,3 +16,7 @@ allow devicesettings_app vendor_sysfs_kgsl_gpuclk:file r_file_perms;
 # DisplayFeature-backed DC dimming property.
 get_prop(devicesettings_app, vendor_displayfeature_prop)
 set_prop(devicesettings_app, vendor_displayfeature_prop)
+
+# Video enhancement mode, persisted across reboots.
+get_prop(devicesettings_app, vendor_video_enhancement_prop)
+set_prop(devicesettings_app, vendor_video_enhancement_prop)
