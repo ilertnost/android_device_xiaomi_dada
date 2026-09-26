@@ -33,6 +33,14 @@ public class HBMModeSwitch implements OnPreferenceChangeListener {
         return null;
     }
 
+    /**
+     * HBM can only be driven on kernels that expose the panel node, so the
+     * UI must stay hidden where it is missing.
+     */
+    public static boolean isSupported() {
+        return getHBM() != null;
+    }
+
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         boolean enabled = (Boolean) newValue;

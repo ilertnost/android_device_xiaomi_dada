@@ -267,6 +267,56 @@
                 android:resource="@string/dc_dimming_enable_summary" />
         </activity>
 
+        <!-- High brightness mode (HBM) settings activity -->
+        <activity
+            android:name=".hbm.HBMActivity"
+            android:enabled="false"
+            android:label="@string/hbm_fragment_title"
+            android:exported="true"
+            android:theme="@style/Theme.SubSettingsBase_v31">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.display" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/hbm_fragment_summary" />
+        </activity>
+
+        <!-- High brightness mode tile service -->
+        <service
+            android:name=".hbm.HBMModeTileService"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/ic_hbm_tile"
+            android:label="@string/hbm_mode_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Automatic HBM tile service -->
+        <service
+            android:name=".hbm.AutoHBMTileService"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/ic_auto_hbm_tile"
+            android:label="@string/auto_hbm_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Automatic HBM service -->
+        <service
+            android:name=".hbm.AutoHBMService"
+            android:enabled="false"
+            android:exported="false" />
+
         <!-- Edge filter settings activity -->
         <activity
             android:name=".edgefilter.EdgeFilterSettingsActivity"
