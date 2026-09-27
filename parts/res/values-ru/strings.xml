@@ -214,25 +214,8 @@
     <string name="image_preview_next_page_content_description">Вперед</string>
     <string name="image_preview_previous_page_content_description">Назад</string>
 
-    <!-- HBM -->
-    <string name="hbm_fragment_title">Режим высокой яркости</string>
-    <string name="hbm_fragment_summary">Настройки режима HBM</string>
-    <string name="hbm_mode_title">HBM</string>
-    <string name="hbm_mode_summary">Включение пиковой яркости</string>
-    <string name="auto_hbm_title">Автоматический HBM</string>
-    <string name="auto_hbm_summary">Включение пиковой яркости при солнечном свете</string>
-    <string name="auto_hbm_threshold_title">Порог активации</string>
-    <string name="auto_hbm_threshold_summary">порог (люкс)</string>
-    <string name="hbm_disable_time_title">Задержка выключения</string>
-    <string name="hbm_disable_time_summary">задержка (секунды)</string>
-    <string name="hbm_mode_warning">Длительное использование режима высокой яркости может повредить дисплей</string>
-    <string name="hbm_disable_dc_dimming_first">Отключите DC Dimming, чтобы включить режим высокой яркости (HBM)</string>
-    <string name="hbm_turn_off_on_screen_off_title">Выключать HBM при выключении экрана</string>
-    <string name="hbm_turn_off_on_screen_off_summary">Автоматически выключать режим высокой яркости (HBM) после затухания экрана</string>
-
     <!-- DC Dimming -->
     <string name="dc_dimming_enable_title">DC Dimming</string>
     <string name="dc_dimming_enable_summary">Снижение нагрузки на глаза в условиях низкой освещенности</string>
-    <string name="dc_dimming_enable_summary_not_supported">DC Dimming не поддерживается текущим ядром</string>
-    <string name="dc_dimming_disable_hbm_first">Отключите HBM, чтобы включить DC Dimming</string>
+    <string name="dc_dimming_enable_summary_not_supported">DC Dimming не поддерживается ядром</string>
 </resources>

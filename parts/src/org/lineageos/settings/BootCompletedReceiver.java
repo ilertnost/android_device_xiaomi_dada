@@ -31,11 +31,6 @@ import org.lineageos.settings.dcdimming.DcDimmingSettingsActivity;
 import org.lineageos.settings.dcdimming.DcDimmingTileService;
 import org.lineageos.settings.dcdimming.DcDimmingUtils;
 import org.lineageos.settings.edgefilter.EdgeFilterUtils;
-import org.lineageos.settings.hbm.AutoHBMService;
-import org.lineageos.settings.hbm.AutoHBMTileService;
-import org.lineageos.settings.hbm.HBMActivity;
-import org.lineageos.settings.hbm.HBMModeSwitch;
-import org.lineageos.settings.hbm.HBMModeTileService;
 import org.lineageos.settings.thermal.ThermalUtils;
 import org.lineageos.settings.refreshrate.RefreshUtils;
 import org.lineageos.settings.utils.ComponentUtils;
@@ -70,12 +65,5 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 
         // Wet touch and glove cloud modes
         CloudModeUtils.applyLater(context);
-
-        // HBM, only where the panel exposes its control node
-        boolean hbmSupported = HBMModeSwitch.isSupported();
-        ComponentUtils.toggleComponent(context, HBMActivity.class, hbmSupported);
-        ComponentUtils.toggleComponent(context, HBMModeTileService.class, hbmSupported);
-        ComponentUtils.toggleComponent(context, AutoHBMTileService.class, hbmSupported);
-        ComponentUtils.toggleComponent(context, AutoHBMService.class, hbmSupported);
     }
 }
