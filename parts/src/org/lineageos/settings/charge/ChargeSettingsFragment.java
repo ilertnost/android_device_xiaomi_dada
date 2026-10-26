@@ -59,12 +59,7 @@ public class ChargeSettingsFragment extends SettingsBasePreferenceFragment
                 ChargeUtils.SafetyCheckResult safetyCheck = chargeUtils.performSafetyChecks();
 
                 if (!safetyCheck.isSafe()) {
-                    new AlertDialog.Builder(requireActivity())
-                            .setTitle(R.string.charge_bypass_title)
-                            .setMessage(getString(R.string.charge_bypass_safety_failed,
-                                    safetyCheck.getReason()))
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
+                    showError(safetyCheck.getReason());
                     return false;
                 }
 
@@ -72,9 +67,13 @@ public class ChargeSettingsFragment extends SettingsBasePreferenceFragment
                         .setTitle(R.string.charge_bypass_title)
                         .setMessage(R.string.charge_bypass_warning)
                         .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                            chargeUtils.enableBypassCharge(true);
+                            ChargeUtils.ApplyResult result =
+                                    chargeUtils.enableBypassCharge(true);
                             if (bypassChargePreference != null) {
-                                bypassChargePreference.setChecked(true);
+                                bypassChargePreference.setChecked(result.isSuccess());
+                            }
+                            if (!result.isSuccess()) {
+                                showError(result.getReason());
                             }
                             try {
                                 BypassChargeTileService.updateTile(requireActivity());
@@ -89,14 +88,29 @@ public class ChargeSettingsFragment extends SettingsBasePreferenceFragment
                         .show();
                 return false;
             } else {
-                chargeUtils.enableBypassCharge(false);
+                ChargeUtils.ApplyResult result = chargeUtils.enableBypassCharge(false);
                 try {
                     BypassChargeTileService.updateTile(requireActivity());
                 } catch (Exception e) {
+                }
+                if (!result.isSuccess()) {
+                    showError(result.getReason());
+                    if (bypassChargePreference != null) {
+                        bypassChargePreference.setChecked(chargeUtils.isBypassChargeEnabled());
+                    }
+                    return false;
                 }
                 return true;
             }
         }
         return false;
+    }
+
+    private void showError(String reason) {
+        new AlertDialog.Builder(requireActivity())
+                .setTitle(R.string.charge_bypass_title)
+                .setMessage(getString(R.string.charge_bypass_safety_failed, reason))
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 }

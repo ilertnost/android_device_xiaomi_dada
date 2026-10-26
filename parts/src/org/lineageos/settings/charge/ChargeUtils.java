@@ -62,21 +62,30 @@ public class ChargeUtils {
         return value != null && BYPASS_ENABLED_STATUS.equals(value.trim());
     }
 
-    public void enableBypassCharge(boolean enable) {
+    /**
+     * Enables or disables bypass charging.
+     *
+     * @return the outcome of the request; the stored preference is only updated
+     *         when the hardware actually accepted it
+     */
+    public ApplyResult enableBypassCharge(boolean enable) {
         if (enable) {
             SafetyCheckResult safetyCheck = performSafetyChecks();
             if (!safetyCheck.isSafe()) {
                 Log.w(TAG, "Safety check failed: " + safetyCheck.getReason());
-                return;
+                return new ApplyResult(false, safetyCheck.getReason());
             }
         }
 
         String value = enable ? BYPASS_ENABLED_VALUE : BYPASS_DISABLED_VALUE;
-        if (FileUtils.writeLine(BYPASS_CHARGE_NODE, value)) {
-            sharedPrefs.edit().putBoolean(PREF_BYPASS_CHARGE, enable).apply();
-        } else {
+        if (!FileUtils.writeLine(BYPASS_CHARGE_NODE, value)) {
             Log.e(TAG, "Failed to write bypass charge status");
+            return new ApplyResult(false,
+                    context.getString(R.string.charge_bypass_write_failed));
         }
+
+        sharedPrefs.edit().putBoolean(PREF_BYPASS_CHARGE, enable).apply();
+        return new ApplyResult(true, null);
     }
 
     private boolean isNodeAccessible(String node) {
@@ -172,6 +181,27 @@ public class ChargeUtils {
 
         Log.w(TAG, "Unable to read battery capacity");
         return 0;
+    }
+
+    public static class ApplyResult {
+        private final boolean success;
+        private final String reason;
+
+        public ApplyResult(boolean success, String reason) {
+            this.success = success;
+            this.reason = reason;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        /**
+         * @return why the request was rejected, null when it succeeded
+         */
+        public String getReason() {
+            return reason;
+        }
     }
 
     public static class SafetyCheckResult {

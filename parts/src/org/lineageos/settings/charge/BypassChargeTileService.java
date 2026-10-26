@@ -57,13 +57,10 @@ public class BypassChargeTileService extends TileService {
     public void onStartListening() {
         super.onStartListening();
 
-        if (!isDeveloperOptionsEnabled()) {
-            chargeUtils.enableBypassCharge(false);
-            updateTileUI(false);
-            return;
-        }
-
         executorService.execute(() -> {
+            if (!isDeveloperOptionsEnabled()) {
+                chargeUtils.enableBypassCharge(false);
+            }
             boolean enabled = chargeUtils.isBypassChargeEnabled();
             mainHandler.post(() -> updateTileUI(enabled));
         });
@@ -75,8 +72,11 @@ public class BypassChargeTileService extends TileService {
 
         if (!isDeveloperOptionsEnabled()) {
             Toast.makeText(this, "Enable Developer Options first", Toast.LENGTH_SHORT).show();
-            chargeUtils.enableBypassCharge(false);
-            updateTileUI(false);
+            executorService.execute(() -> {
+                chargeUtils.enableBypassCharge(false);
+                boolean enabled = chargeUtils.isBypassChargeEnabled();
+                mainHandler.post(() -> updateTileUI(enabled));
+            });
             return;
         }
 
@@ -90,26 +90,33 @@ public class BypassChargeTileService extends TileService {
 
         if (newEnabled) {
             executorService.execute(() -> {
-                ChargeUtils.SafetyCheckResult safetyCheck = chargeUtils.performSafetyChecks();
+                ChargeUtils.ApplyResult result = chargeUtils.enableBypassCharge(true);
 
-                if (!safetyCheck.isSafe()) {
-                    mainHandler.post(() -> {
+                mainHandler.post(() -> {
+                    if (result.isSuccess()) {
+                        updateTileUI(true);
+                    } else {
                         Toast.makeText(this,
                                 getString(R.string.charge_bypass_safety_failed,
-                                        safetyCheck.getReason()),
+                                        result.getReason()),
                                 Toast.LENGTH_LONG).show();
                         updateTileUI(false);
-                    });
-                    return;
-                }
-
-                chargeUtils.enableBypassCharge(true);
-                mainHandler.post(() -> updateTileUI(true));
+                    }
+                });
             });
         } else {
-            updateTileUI(false);
             executorService.execute(() -> {
-                chargeUtils.enableBypassCharge(false);
+                ChargeUtils.ApplyResult result = chargeUtils.enableBypassCharge(false);
+                boolean enabled = chargeUtils.isBypassChargeEnabled();
+                mainHandler.post(() -> {
+                    if (!result.isSuccess()) {
+                        Toast.makeText(this,
+                                getString(R.string.charge_bypass_safety_failed,
+                                        result.getReason()),
+                                Toast.LENGTH_LONG).show();
+                    }
+                    updateTileUI(enabled);
+                });
             });
         }
     }
