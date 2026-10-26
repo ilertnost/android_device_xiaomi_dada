@@ -59,7 +59,6 @@ public class GameBar {
         return sInstance;
     }
 
-    private static final String FPS_PATH          = "/sys/class/drm/sde-crtc-0/measured_fps";
     private static final String BATTERY_TEMP_PATH = "/sys/class/power_supply/battery/temp";
 
     private static final String PREF_KEY_X = "game_bar_x";
@@ -81,6 +80,7 @@ public class GameBar {
     private String mTitleColorHex = "#FFFFFF";
     private String mValueColorHex = "#FFFFFF";
     private String mOverlayFormat = "full";
+    private String mFpsMethod     = "new";
     private String mPosition      = "top_left";
     private String mSplitMode     = "stacked";
     private int mUpdateIntervalMs = 1000;
@@ -208,6 +208,16 @@ public class GameBar {
             long lpt = Long.parseLong(lpTimeoutStr);
             setLongPressThresholdMs(lpt);
         } catch (NumberFormatException ignored) {}
+
+        String fpsMethod = prefs.getString("game_bar_fps_method", "new");
+        if (!fpsMethod.equals(mFpsMethod)) {
+            mFpsMethod = fpsMethod;
+            if (mIsShowing) {
+                // start() re-registers the task callback or, for the legacy
+                // implementation, tears down the one being used so far.
+                GameBarFpsMeter.getInstance(mContext).start();
+            }
+        }
     }
 
     public void show() {
@@ -603,6 +613,8 @@ public class GameBar {
     }
 
     public void updateOverlayFormat(String format) {
+        if (format == null || format.equals(mOverlayFormat)) return;
+
         mOverlayFormat = format;
         if (mIsShowing) {
             updateStats();
@@ -610,6 +622,8 @@ public class GameBar {
     }
 
     public void updateItemSpacing(int dp) {
+        if (dp == mItemSpacingDp) return;
+
         mItemSpacingDp = dp;
         if (mIsShowing) {
             updateStats();
@@ -653,6 +667,8 @@ public class GameBar {
     }
 
     public void updateSplitMode(String mode) {
+        if (mode == null || mode.equals(mSplitMode)) return;
+
         mSplitMode = mode;
         if (mIsShowing && mOverlayView != null) {
             applySplitMode();
@@ -661,14 +677,24 @@ public class GameBar {
     }
 
     public void updateUpdateInterval(String intervalStr) {
+        int intervalMs;
         try {
-            mUpdateIntervalMs = Integer.parseInt(intervalStr);
+            intervalMs = Integer.parseInt(intervalStr);
         } catch (NumberFormatException e) {
-            mUpdateIntervalMs = 1000;
+            intervalMs = 1000;
         }
+        // Rescheduling the update timer also restarts the current interval, so
+        // only do it when the interval actually changed.
+        if (intervalMs == mUpdateIntervalMs) return;
+
+        mUpdateIntervalMs = intervalMs;
         if (mIsShowing) {
             startUpdates();
         }
+    }
+
+    public boolean isShowing() {
+        return mIsShowing;
     }
 
     public void setLongPressEnabled(boolean enabled) {

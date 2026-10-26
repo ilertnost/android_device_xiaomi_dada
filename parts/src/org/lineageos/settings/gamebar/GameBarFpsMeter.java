@@ -35,6 +35,8 @@ public class GameBarFpsMeter {
     private static final float TOLERANCE = 0.1f;
     private static final long STALENESS_THRESHOLD_MS = 2000;
     private static final long TASK_CHECK_INTERVAL_MS = 1000;
+    private static final long RESTART_DELAY_MS = 500;
+    private static final String LEGACY_FPS_PATH = "/sys/class/drm/card0-sde-crtc-0/measured_fps";
 
     private static GameBarFpsMeter sInstance;
     private final Context mContext;
@@ -43,6 +45,7 @@ public class GameBarFpsMeter {
     private float mCurrentFps = 0f;
     private TaskFpsCallback mTaskFpsCallback;
     private boolean mCallbackRegistered = false;
+    private boolean mStarted = false;
     private int mCurrentTaskId = -1;
     private long mLastFpsUpdateTime = System.currentTimeMillis();
     private final android.os.Handler mHandler = new android.os.Handler();
@@ -72,10 +75,12 @@ public class GameBarFpsMeter {
     }
 
     public void start() {
+        stop();
+
         String method = mPrefs.getString("game_bar_fps_method", "new");
         if (!"new".equals(method)) return;
 
-        stop();
+        mStarted = true;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             int taskId = getFocusedTaskId();
@@ -94,17 +99,21 @@ public class GameBarFpsMeter {
     }
 
     public void stop() {
-        String method = mPrefs.getString("game_bar_fps_method", "new");
-        if ("new".equals(method) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (mCallbackRegistered) {
-                try {
-                    mWindowManager.unregisterTaskFpsCallback(mTaskFpsCallback);
-                } catch (Exception e) {
-                }
-                mCallbackRegistered = false;
-            }
-            mHandler.removeCallbacks(mTaskCheckRunnable);
+        mStarted = false;
+        mHandler.removeCallbacks(mRestartRunnable);
+        mHandler.removeCallbacks(mTaskCheckRunnable);
+        unregisterCallback();
+        mCurrentTaskId = -1;
+    }
+
+    private void unregisterCallback() {
+        if (!mCallbackRegistered) return;
+
+        try {
+            mWindowManager.unregisterTaskFpsCallback(mTaskFpsCallback);
+        } catch (Exception e) {
         }
+        mCallbackRegistered = false;
     }
 
     public float getFps() {
@@ -117,7 +126,7 @@ public class GameBarFpsMeter {
     }
 
     private float readLegacyFps() {
-        try (BufferedReader br = new BufferedReader(new FileReader("/sys/class/drm/sde-crtc-0/measured_fps"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(LEGACY_FPS_PATH))) {
             String line = br.readLine();
             if (line != null && line.startsWith("fps:")) {
                 String[] parts = line.split("\\s+");
@@ -133,16 +142,16 @@ public class GameBarFpsMeter {
     private final Runnable mTaskCheckRunnable = new Runnable() {
         @Override
         public void run() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                int newTaskId = getFocusedTaskId();
-                if (newTaskId > 0 && newTaskId != mCurrentTaskId) {
-                    reinitCallback();
-                } else {
-                    long now = System.currentTimeMillis();
-                    if (now - mLastFpsUpdateTime > STALENESS_THRESHOLD_MS) {
-                        reinitCallback();
-                    }
-                }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || !mStarted) return;
+
+            int newTaskId = getFocusedTaskId();
+            if (newTaskId > 0 && newTaskId != mCurrentTaskId) {
+                reinitCallback();
+            } else if (System.currentTimeMillis() - mLastFpsUpdateTime > STALENESS_THRESHOLD_MS) {
+                reinitCallback();
+            }
+
+            if (mStarted) {
                 mHandler.postDelayed(this, TASK_CHECK_INTERVAL_MS);
             }
         }
@@ -176,12 +185,21 @@ public class GameBarFpsMeter {
     }
 
     private void reinitCallback() {
-        stop();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                start();
-            }
-        }, 500);
+        if (!mStarted) return;
+
+        mHandler.removeCallbacks(mTaskCheckRunnable);
+        mHandler.removeCallbacks(mRestartRunnable);
+        unregisterCallback();
+        mHandler.postDelayed(mRestartRunnable, RESTART_DELAY_MS);
     }
+
+    private final Runnable mRestartRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // A delayed restart must not revive a meter that was stopped
+            // (overlay hidden or the legacy method selected) in the meantime.
+            if (!mStarted) return;
+            start();
+        }
+    };
 }

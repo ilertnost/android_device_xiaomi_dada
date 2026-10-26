@@ -18,6 +18,7 @@ package org.lineageos.settings.gamebar;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import androidx.preference.PreferenceManager;
@@ -26,14 +27,29 @@ import java.util.Set;
 
 public class GameBarMonitorService extends Service {
 
+    private static final String PREF_PREFIX = "game_bar";
+    private static final long MONITOR_INTERVAL = 2000; // 2 seconds
+
     private Handler mHandler;
     private Runnable mMonitorRunnable;
-    private static final long MONITOR_INTERVAL = 2000; // 2 seconds
+    private SharedPreferences mPrefs;
+
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                    if (key != null && key.startsWith(PREF_PREFIX)) {
+                        GameBar.getInstance(GameBarMonitorService.this).applyPreferences();
+                    }
+                }
+            };
 
     @Override
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler();
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
         mMonitorRunnable = new Runnable() {
             @Override
             public void run() {
@@ -45,27 +61,27 @@ public class GameBarMonitorService extends Service {
     }
 
     private void monitorForegroundApp() {
-        var prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean masterEnabled = prefs.getBoolean("game_bar_enable", false);
-        if (masterEnabled) {
-            GameBar.getInstance(this).applyPreferences();
-            GameBar.getInstance(this).show();
-            return;
-        }
-
-        boolean autoEnabled = prefs.getBoolean("game_bar_auto_enable", false);
-        if (!autoEnabled) {
-            GameBar.getInstance(this).hide();
-            return;
-        }
-
-        String foreground = ForegroundAppDetector.getForegroundPackageName(this);
-        Set<String> autoApps = prefs.getStringSet(GameBarAppSelectorFragment.PREF_AUTO_APPS, new HashSet<>());
-        if (autoApps.contains(foreground)) {
-            GameBar.getInstance(this).applyPreferences();
-            GameBar.getInstance(this).show();
+        boolean show;
+        if (mPrefs.getBoolean("game_bar_enable", false)) {
+            show = true;
+        } else if (mPrefs.getBoolean("game_bar_auto_enable", false)) {
+            String foreground = ForegroundAppDetector.getForegroundPackageName(this);
+            Set<String> autoApps = mPrefs.getStringSet(
+                    GameBarAppSelectorFragment.PREF_AUTO_APPS, new HashSet<>());
+            show = autoApps.contains(foreground);
         } else {
-            GameBar.getInstance(this).hide();
+            show = false;
+        }
+
+        GameBar gameBar = GameBar.getInstance(this);
+        if (!show) {
+            gameBar.hide();
+        } else if (!gameBar.isShowing()) {
+            // GameBar.show() applies the current preferences itself, so only do
+            // the work when the overlay is actually being shown. Re-applying
+            // them on every tick would rebuild the stats views and restart the
+            // update timer continuously.
+            gameBar.show();
         }
     }
 
@@ -78,5 +94,6 @@ public class GameBarMonitorService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacks(mMonitorRunnable);
+        mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
     }
 }

@@ -13,10 +13,11 @@ r_dir_file(devicesettings_app, vendor_sysfs_battery_supply)
 r_dir_file(devicesettings_app, vendor_sysfs_kgsl)
 allow devicesettings_app vendor_sysfs_kgsl_gpuclk:file r_file_perms;
 
+# GameBar legacy FPS counter (/sys/class/drm/card0-sde-crtc-0/measured_fps).
+# The node is vendor_sysfs_graphics; the directories on the way to it are plain
+# sysfs, whose search permission comes from the generic domain rule.
+allow devicesettings_app vendor_sysfs_graphics:file r_file_perms;
+
 # DisplayFeature-backed DC dimming property.
 get_prop(devicesettings_app, vendor_displayfeature_prop)
 set_prop(devicesettings_app, vendor_displayfeature_prop)
-
-# Video enhancement mode, persisted across reboots.
-get_prop(devicesettings_app, vendor_video_enhancement_prop)
-set_prop(devicesettings_app, vendor_video_enhancement_prop)
