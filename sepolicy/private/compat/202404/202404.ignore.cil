@@ -4,4 +4,5 @@
 (typeattributeset new_objects
   ( new_objects
     devicesettings_app
+    ifaa_app
   ))

@@ -307,6 +307,8 @@ blob_fixups: blob_fixups_user_type = {
     ): blob_fixup()
         .replace_needed('android.frameworks.cameraservice.device-V2-ndk.so', 'android.frameworks.cameraservice.device-V3-ndk.so')
         .replace_needed('android.frameworks.cameraservice.service-V2-ndk.so', 'android.frameworks.cameraservice.service-V3-ndk.so'),
+    'product/app/IFAAServiceStock/IFAAServiceStock.apk': blob_fixup()
+        .apktool_patch('blob-patches/IFAAServiceStock'),
 }
 
 module = ExtractUtilsModule(

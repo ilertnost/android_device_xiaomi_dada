@@ -2288,8 +2288,8 @@ odm/lib64/qsn1rtlp43270.bin;SYMLINK=vendor/lib64/qsn1rtlp43270.bin
 odm/lib64/qsn2all.bin;SYMLINK=vendor/lib64/qsn2all.bin
 odm/lib64/qsn3all.bin;SYMLINK=vendor/lib64/qsn3all.bin
 
-# IFAA
-mi_ext/product/app/IFAAService/IFAAService.apk:product/app/IFAAService/IFAAService.apk;MODULE=IFAAServiceStock;OVERRIDES=IFAAService;PRESIGNED
+# IFAA - patched at extraction, so it is signed with the platform key
+mi_ext/product/app/IFAAService/IFAAService.apk:product/app/IFAAServiceStock/IFAAServiceStock.apk;OVERRIDES=IFAAService
 
 # eSIM
 mi_ext/product/etc/default-permissions/EuiccGoogle-default-permissions-google.xml:product/etc/default-permissions/EuiccGoogle-default-permissions-google.xml

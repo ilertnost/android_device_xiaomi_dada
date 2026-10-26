@@ -1,0 +1,5 @@
+typeattribute ifaa_app coredomain;
+app_domain(ifaa_app)
+
+# Framework services, including starting the security settings.
+allow ifaa_app app_api_service:service_manager find;

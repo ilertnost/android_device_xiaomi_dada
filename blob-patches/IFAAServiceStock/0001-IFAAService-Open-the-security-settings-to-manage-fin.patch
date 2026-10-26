@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: turbo-boo <59400127+turbo-boo@users.noreply.github.com>
+Date: Sun, 25 Oct 2026 11:59:07 +0900
+Subject: [PATCH] IFAAService: Open the security settings to manage
+ fingerprints
+
+startBIOManager() starts com.android.settings.NewFingerprintActivity, which
+only exists in the HyperOS Settings app. Open the security settings instead,
+like the LineageOS IFAAService does.
+---
+ .../ifaa/aidl/manager/IfaaService$IfaaServiceStub.smali   | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/smali/org/ifaa/aidl/manager/IfaaService$IfaaServiceStub.smali b/smali/org/ifaa/aidl/manager/IfaaService$IfaaServiceStub.smali
+index 070f794..a949aa2 100644
+--- a/smali/org/ifaa/aidl/manager/IfaaService$IfaaServiceStub.smali
++++ b/smali/org/ifaa/aidl/manager/IfaaService$IfaaServiceStub.smali
+@@ -595,14 +595,10 @@
+     .line 116
+     new-instance v0, Landroid/content/Intent;
+ 
+-    invoke-direct {v0}, Landroid/content/Intent;-><init>()V
+-
+-    const-string v1, "com.android.settings"
+-
+-    const-string v2, "com.android.settings.NewFingerprintActivity"
++    const-string v1, "android.settings.SECURITY_SETTINGS"
+ 
+     .line 117
+-    invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->setClassName(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
++    invoke-direct {v0, v1}, Landroid/content/Intent;-><init>(Ljava/lang/String;)V
+ 
+     const/high16 v1, 0x10000000
+ 
