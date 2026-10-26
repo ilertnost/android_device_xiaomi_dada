@@ -1,7 +1,0 @@
-# Persisted video enhancement mode (off/memc/aie/ais).
-#
-# The media stack only reads the volatile debug.media.video.* toggles, which do
-# not survive a reboot. init derives them from this property through the
-# on property: blocks in init.target.rc, so this type is what the settings app
-# owns and init consumes; it carries no access for the media domains.
-type vendor_video_enhancement_prop, property_type;
