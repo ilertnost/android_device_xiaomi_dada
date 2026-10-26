@@ -16,12 +16,7 @@
 
 package org.lineageos.settings.saturation
 
-import android.content.Context
 import android.os.Bundle
-import android.os.IBinder
-import android.os.Parcel
-import android.os.RemoteException
-import android.os.ServiceManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -30,7 +25,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.android.settingslib.widget.LayoutPreference
@@ -47,7 +41,6 @@ class SaturationFragment : PreferenceFragmentCompat(), Preference.OnPreferenceCh
     private var mDotIndicators: Array<ImageView>? = null
     private var mViewPagerImages: Array<View?>? = null
     private var mSaturationPreference: CustomSeekBarPreference? = null
-    private var mSurfaceFlinger: IBinder? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.saturation, rootKey)
@@ -56,12 +49,10 @@ class SaturationFragment : PreferenceFragmentCompat(), Preference.OnPreferenceCh
         val preview = findPreference<LayoutPreference>(Constants.KEY_SATURATION_PREVIEW)
         preview?.let { addViewPager(it) }
 
-        val sharedPrefs = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         mSaturationPreference = findPreference(Constants.KEY_SATURATION)
         mSaturationPreference?.setOnPreferenceChangeListener(this)
 
-        val seekBarValue = sharedPrefs?.getInt(Constants.KEY_SATURATION, 100) ?: 100
-        updateSaturation(seekBarValue)
+        SaturationUtils.restoreSaved(requireContext())
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -71,7 +62,7 @@ class SaturationFragment : PreferenceFragmentCompat(), Preference.OnPreferenceCh
     override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
         if (preference == mSaturationPreference) {
             val seekBarValue = newValue as Int
-            updateSaturation(seekBarValue)
+            SaturationUtils.setSaturation(seekBarValue)
             return true
         }
         return false
@@ -89,32 +80,6 @@ class SaturationFragment : PreferenceFragmentCompat(), Preference.OnPreferenceCh
         } else {
             super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun updateSaturation(seekBarValue: Int) {
-        val saturation = if (seekBarValue == 100) 1.001f else seekBarValue / 100.0f
-        mSurfaceFlinger?.let {
-            try {
-                val data = Parcel.obtain()
-                data.writeInterfaceToken("android.ui.ISurfaceComposer")
-                data.writeFloat(saturation)
-                it.transact(1022, data, null, 0)
-                data.recycle()
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mSurfaceFlinger = ServiceManager.getService("SurfaceFlinger")
-    }
-
-    fun restoreSaturationSetting(context: Context) {
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val seekBarValue = sharedPrefs.getInt(Constants.KEY_SATURATION, 100)
-        updateSaturation(seekBarValue)
     }
 
     private fun addViewPager(preview: LayoutPreference) {
