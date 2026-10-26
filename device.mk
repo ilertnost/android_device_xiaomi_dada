@@ -33,7 +33,6 @@ PRODUCT_PACKAGES += \
 
 # Overlays
 PRODUCT_PACKAGES += \
-    ApertureResDada \
     FrameworksResDada \
     FrameworksResDadaEsim \
     SettingsOverlayDada \

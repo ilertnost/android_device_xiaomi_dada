@@ -4,6 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# MIUI Camera is the only camera app. This must also be set before the first
+# inherit-product so that common_mobile_full.mk skips Aperture.
+PRODUCT_NO_CAMERA := true
+
 # Inherit from products
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
