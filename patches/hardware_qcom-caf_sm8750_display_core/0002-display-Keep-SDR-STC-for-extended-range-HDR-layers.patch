@@ -1,4 +1,4 @@
-From 54ce520430c47ab4a63ffa0bd93e930073a28d70 Mon Sep 17 00:00:00 2001
+From 2bb8d4cd50ce1c9a9ddb64a63dce6e81815ae642 Mon Sep 17 00:00:00 2001
 From: turbo-boo <59400127+turbo-boo@users.noreply.github.com>
 Date: Fri, 17 Jul 2026 00:42:42 +0900
 Subject: [PATCH] display: Keep SDR STC for extended-range HDR layers
@@ -20,7 +20,7 @@ Change-Id: I44ace4d150c35587a323fb988d67520093a09497
  4 files changed, 20 insertions(+), 6 deletions(-)
 
 diff --git a/sdmclient/sdm_display.cpp b/sdmclient/sdm_display.cpp
-index 9bd18d5..cee8f46 100644
+index 8da2254..907b876 100644
 --- a/sdmclient/sdm_display.cpp
 +++ b/sdmclient/sdm_display.cpp
 @@ -797,11 +797,15 @@ DisplayError SDMDisplay::Deinit() {
@@ -51,7 +51,7 @@ index 9bd18d5..cee8f46 100644
    bool video_layer_updating = false;
    bool ui_layer_updating = false;
  
-@@ -927,6 +932,12 @@ void SDMDisplay::BuildLayerStack() {
+@@ -937,6 +942,12 @@ void SDMDisplay::BuildLayerStack() {
        // Dont honor HDR when its handling is disabled
        layer->input_buffer.flags.hdr = true;
        layer_stack_.flags.hdr_present = true;
@@ -64,7 +64,7 @@ index 9bd18d5..cee8f46 100644
      }
  
      if (game_supported_ && (sdm_layer->GetType() == kLayerGame) && !hdr_layer) {
-@@ -1054,6 +1065,7 @@ void SDMDisplay::BuildLayerStack() {
+@@ -1065,6 +1076,7 @@ void SDMDisplay::BuildLayerStack() {
    DLOGV_IF(kTagClient, "layer_stack_.client_incompatible : %d",
             layer_stack_.client_incompatible);
    SDMDebugHandler::ATRACE_INT("HDRPresent ", layer_stack_.flags.hdr_present ? 1 : 0);
@@ -72,7 +72,7 @@ index 9bd18d5..cee8f46 100644
    SDMDebugHandler::ATRACE_INT("FrontBufferPresent ",
                                layer_stack_.flags.front_buffer_layer_present ? 1 : 0);
  }
-@@ -1061,6 +1073,7 @@ void SDMDisplay::BuildLayerStack() {
+@@ -1072,6 +1084,7 @@ void SDMDisplay::BuildLayerStack() {
  void SDMDisplay::BuildSolidFillStack() {
    layer_stack_ = LayerStack();
    display_rect_ = LayerRect();
@@ -120,3 +120,4 @@ index 7ba893a..f2ea076 100644
      // tranform needs to be applied.
 -- 
 2.43.0
+
