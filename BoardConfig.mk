@@ -16,11 +16,9 @@ TARGET_SCREEN_DENSITY := 520
 SOONG_CONFIG_NAMESPACES += xiaomi_display
 SOONG_CONFIG_xiaomi_display += \
     cwb_notify_sensor \
-    dual_als_fusion \
-    panel_dimensions_tenths_mm
+    dual_als_fusion
 SOONG_CONFIG_xiaomi_display_cwb_notify_sensor := true
 SOONG_CONFIG_xiaomi_display_dual_als_fusion := true
-SOONG_CONFIG_xiaomi_display_panel_dimensions_tenths_mm := true
 
 SOONG_CONFIG_qtidisplay += prebuilt_allocator
 SOONG_CONFIG_qtidisplay_prebuilt_allocator := true
