@@ -20,4 +20,3 @@ allow devicesettings_app vendor_sysfs_graphics:file r_file_perms;
 
 # DisplayFeature-backed DC dimming property.
 get_prop(devicesettings_app, vendor_displayfeature_prop)
-set_prop(devicesettings_app, vendor_displayfeature_prop)
