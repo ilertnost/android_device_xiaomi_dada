@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <!-- Required by the Android 17 permission allowlist enforcement. -->
+    <privapp-permissions package="com.android.camera">
+        <permission name="android.permission.START_TASKS_FROM_RECENTS" />
+    </privapp-permissions>
+</permissions>

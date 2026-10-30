@@ -46,6 +46,10 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.euicc.mep.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/android.hardware.telephony.euicc.mep.xml \
     $(LOCAL_PATH)/configs/permissions/privapp-permissions-EuiccGoogle.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/privapp-permissions-EuiccGoogle.xml
 
+# Android 17 privileged permission additions for the stock camera package
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/permissions/privapp-permissions-MiuiCamera-A17.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/privapp-permissions-MiuiCamera-A17.xml
+
 # Screen attention (adaptive sleep)
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/default-permissions/dada-default-permissions.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/default-permissions/dada-default-permissions.xml
