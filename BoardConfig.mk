@@ -41,7 +41,7 @@ PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/vendor_dlkm/,$(TARGET_COPY_OUT_VENDOR_DLKM)/lib/modules) \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/vendor_ramdisk/,$(TARGET_COPY_OUT_VENDOR_RAMDISK)/lib/modules) \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm_flatten/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/flatten/lib/modules) \
-    $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/lib/modules/6.6.144-android15-8-g309ffbbc5ec1-dirty-4k-APEX-Foundry-v1.2)
+    $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/lib/modules/6.6.118-android15-8-gb9cc6ec16bc8-abogki536571621-4k)
 
 # Properties
 TARGET_ODM_PROP += $(DEVICE_PATH)/configs/properties/odm.prop
@@ -53,6 +53,11 @@ BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
 
 # Inherit from the proprietary version
 include vendor/xiaomi/dada/BoardConfigVendor.mk
+
+# Keep the stock OS4 firmware AVB descriptors (pvmfw, countrycode, mi_ext, mi_product)
+# that ABL expects in the main vbmeta image.
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+    --include_descriptors_from_image vendor/xiaomi/dada/avb/os4_stock_descriptors.img
 
 # MIUI Camera
 -include device/xiaomi/dada-miuicamera/BoardConfig.mk
