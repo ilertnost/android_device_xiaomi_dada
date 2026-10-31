@@ -21,7 +21,7 @@ SOONG_CONFIG_xiaomi_display_cwb_notify_sensor := true
 SOONG_CONFIG_xiaomi_display_dual_als_fusion := true
 
 SOONG_CONFIG_qtidisplay += prebuilt_allocator
-SOONG_CONFIG_qtidisplay_prebuilt_allocator := true
+SOONG_CONFIG_qtidisplay_prebuilt_allocator := false
 
 # Dtb/o
 BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PATH)/dtbo.img
@@ -41,7 +41,7 @@ PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/vendor_dlkm/,$(TARGET_COPY_OUT_VENDOR_DLKM)/lib/modules) \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/vendor_ramdisk/,$(TARGET_COPY_OUT_VENDOR_RAMDISK)/lib/modules) \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm_flatten/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/flatten/lib/modules) \
-    $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/lib/modules/6.6.77-android15-8-g63ce7556864c-ab13994517-4k)
+    $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/lib/modules/6.6.144-android15-8-g309ffbbc5ec1-dirty-4k-APEX-Foundry-v1.2)
 
 # Properties
 TARGET_ODM_PROP += $(DEVICE_PATH)/configs/properties/odm.prop
@@ -59,3 +59,38 @@ include vendor/xiaomi/dada/BoardConfigVendor.mk
 
 # Firmware
 -include vendor/xiaomi/dada-firmware/BoardConfigVendor.mk
+
+# Firmware partitions shipped by the device-specific firmware repository
+AB_OTA_PARTITIONS += \
+    abl \
+    aop \
+    aop_config \
+    bluetooth \
+    countrycode \
+    cpucp \
+    cpucp_dtb \
+    devcfg \
+    dsp \
+    featenabler \
+    hyp \
+    idmanager \
+    imagefv \
+    keymaster \
+    modem \
+    modemfirmware \
+    multiimgqti \
+    pdp \
+    pdp_cdb \
+    pvmfw \
+    qupfw \
+    shrm \
+    soccp_dcd \
+    soccp_debug \
+    spuservice \
+    tz \
+    uefi \
+    uefisecapp \
+    vm-bootsys \
+    xbl \
+    xbl_config \
+    xbl_ramdump

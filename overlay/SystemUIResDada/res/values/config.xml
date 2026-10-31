@@ -7,4 +7,7 @@
     <!-- Should we vibrate on an icon animation of the shelf. This should only be active if the
     vibrator is capable of subtle vibrations -->
     <bool name="config_vibrateOnIconAnimation">true</bool>
+
+    <!-- The display stack supports cross-window blur; use it for the volume dialog too. -->
+    <bool name="config_volumeDialogUseBackgroundBlur">true</bool>
 </resources>

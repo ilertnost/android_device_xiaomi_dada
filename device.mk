@@ -5,7 +5,7 @@
 #
 
 # Use the allocator built with the same private ABI as the stock camera stack.
-TARGET_USES_PREBUILT_DISPLAY_ALLOCATOR := true
+TARGET_USES_PREBUILT_DISPLAY_ALLOCATOR := false
 
 # Inherit from sm8750-common
 $(call inherit-product, device/xiaomi/sm8750-common/common.mk)

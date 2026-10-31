@@ -5,7 +5,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- the padding on the top of the statusbar (usually 0) -->
-    <dimen name="status_bar_padding_top">26.0px</dimen>
+    <dimen name="status_bar_padding_top">2.0px</dimen>
 
     <!-- the padding on the start of the statusbar -->
     <dimen name="status_bar_padding_start">4dp</dimen>
@@ -17,7 +17,10 @@
     <dimen name="status_bar_header_height_keyguard">@*android:dimen/status_bar_height</dimen>
 
     <!-- Adjust the icon padding in status bar for rounded corners. -->
-    <dimen name="rounded_corner_content_padding">67.0px</dimen>
+    <dimen name="rounded_corner_content_padding">32.0px</dimen>
+
+    <!-- Keep the privacy-dot reserve symmetric with the rounded-corner padding. -->
+    <dimen name="ongoing_appops_dot_min_padding">32.0px</dimen>
 
     <!-- The width/height of the unlock icon view on keyguard. -->
     <dimen name="keyguard_indication_margin_bottom">11dp</dimen>
