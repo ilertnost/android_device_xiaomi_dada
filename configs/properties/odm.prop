@@ -18,8 +18,6 @@ ro.vendor.media.video.frc.support=true
 ro.vendor.media.video.vpp.support=true
 
 # Fingerprint
-persist.vendor.fingerprint.type=udfps
-persist.vendor.fingerprint.sensor_location=600|2050|109
 persist.vendor.sys.fp.fod.location.X_Y=518,1954
 persist.vendor.sys.fp.fod.size.width_height=164,164
 persist.vendor.sys.fp.fod.us.target=509,1936,690,2135
