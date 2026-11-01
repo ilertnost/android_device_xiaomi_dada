@@ -39,6 +39,14 @@ namespace_imports = [
 ]
 
 blob_fixups: blob_fixups_user_type = {
+    # The stock lights service is imported after the HAL class may already be
+    # started. Associate it with its AIDL instance so servicemanager can start
+    # it on demand instead of blocking SystemServer until watchdog reboot.
+    'odm/etc/init/vendor.qti.hardware.lights.service.rc': blob_fixup()
+        .regex_replace(
+            r'(    group system\n)',
+            r'\1    interface aidl android.hardware.light.ILights/default\n',
+        ),
     (
         'odm/etc/camera/motiontuning.xml',
         'odm/etc/camera/snsc_bokeh_motiontuning.xml',
