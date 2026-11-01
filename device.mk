@@ -13,8 +13,11 @@ $(call inherit-product, device/xiaomi/sm8750-common/common.mk)
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/xiaomi/dada/dada-vendor.mk)
 
-# MIUI Camera
-$(call inherit-product, device/xiaomi/dada-miuicamera/device.mk)
+# Stock camera stack: the MiuiCamera APK and camera blobs come from his vendor.
+# Only the privileged permissions and hidden-API allowlist stay in the device tree.
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/permissions/privapp-permissions-miuicamera.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/privapp-permissions-miuicamera.xml \
+    $(LOCAL_PATH)/configs/sysconfig/miuicamera-hiddenapi.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/miuicamera-hiddenapi.xml
 
 # Device-specific settings
 PRODUCT_PACKAGES += \
@@ -26,10 +29,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_SYSTEM_PROPERTIES += \
     avf.remote_attestation.enabled=false
 
-# The stock camera HAL directly loads the frozen sensors AIDL V2 while the
-# platform sensorservice uses V3.
-PRODUCT_PACKAGES += \
-    android.hardware.sensors-V2-ndk
+# The stock camera HAL loads the frozen sensors AIDL V2 library, which his
+# vendor already installs as a prebuilt.
 
 # Overlays
 PRODUCT_PACKAGES += \
@@ -45,10 +46,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.euicc.mep.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/android.hardware.telephony.euicc.mep.xml \
     $(LOCAL_PATH)/configs/permissions/privapp-permissions-EuiccGoogle.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/privapp-permissions-EuiccGoogle.xml
-
-# Android 17 privileged permission additions for the stock camera package
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/permissions/privapp-permissions-MiuiCamera-A17.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/privapp-permissions-MiuiCamera-A17.xml
 
 # Screen attention (adaptive sleep)
 PRODUCT_COPY_FILES += \

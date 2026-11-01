@@ -41,7 +41,7 @@ PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/vendor_dlkm/,$(TARGET_COPY_OUT_VENDOR_DLKM)/lib/modules) \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/vendor_ramdisk/,$(TARGET_COPY_OUT_VENDOR_RAMDISK)/lib/modules) \
     $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm_flatten/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/flatten/lib/modules) \
-    $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/lib/modules/6.6.118-android15-8-gb9cc6ec16bc8-abogki536571621-4k)
+    $(call find-copy-subdir-files,*,$(KERNEL_PATH)/system_dlkm/,$(TARGET_COPY_OUT_SYSTEM_DLKM)/lib/modules/6.6.144-4k-APEX-Foundry-v1.4-newbase+)
 
 # Properties
 TARGET_ODM_PROP += $(DEVICE_PATH)/configs/properties/odm.prop
@@ -58,9 +58,6 @@ include vendor/xiaomi/dada/BoardConfigVendor.mk
 # that ABL expects in the main vbmeta image.
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += \
     --include_descriptors_from_image vendor/xiaomi/dada/avb/os4_stock_descriptors.img
-
-# MIUI Camera
--include device/xiaomi/dada-miuicamera/BoardConfig.mk
 
 # Firmware
 -include vendor/xiaomi/dada-firmware/BoardConfigVendor.mk

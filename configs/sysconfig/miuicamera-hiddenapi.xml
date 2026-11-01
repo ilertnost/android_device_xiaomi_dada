@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- dada: the stock camera reflects into framework internals (as allowed on stock HyperOS) -->
+<config>
+    <hidden-api-whitelisted-app package="com.android.camera" />
+</config>
