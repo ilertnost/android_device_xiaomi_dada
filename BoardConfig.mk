@@ -10,6 +10,9 @@ KERNEL_PATH := $(DEVICE_PATH)-kernel
 # Inherit from sm8750-common
 include device/xiaomi/sm8750-common/BoardConfigCommon.mk
 
+# MIUI Camera
+include device/xiaomi/dada-miuicamera/BoardConfig.mk
+
 # Display
 TARGET_SCREEN_DENSITY := 520
 

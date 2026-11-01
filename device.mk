@@ -10,14 +10,11 @@ TARGET_USES_PREBUILT_DISPLAY_ALLOCATOR := false
 # Inherit from sm8750-common
 $(call inherit-product, device/xiaomi/sm8750-common/common.mk)
 
+# MIUI Camera
+$(call inherit-product, device/xiaomi/dada-miuicamera/device.mk)
+
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/xiaomi/dada/dada-vendor.mk)
-
-# Stock camera stack: the MiuiCamera APK and camera blobs come from his vendor.
-# Only the privileged permissions and hidden-API allowlist stay in the device tree.
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/permissions/privapp-permissions-miuicamera.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/privapp-permissions-miuicamera.xml \
-    $(LOCAL_PATH)/configs/sysconfig/miuicamera-hiddenapi.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/miuicamera-hiddenapi.xml
 
 # Device-specific settings
 PRODUCT_PACKAGES += \
