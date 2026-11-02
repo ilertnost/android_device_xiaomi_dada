@@ -22,7 +22,7 @@ $(call inherit-product, device/xiaomi/dada/device.mk)
 PRODUCT_DEVICE := dada
 PRODUCT_NAME := lineage_dada
 PRODUCT_BRAND := Xiaomi
-PRODUCT_MODEL := 24129PN74C
+PRODUCT_MODEL := 24129PN74G
 PRODUCT_MANUFACTURER := Xiaomi
 PRODUCT_CHARACTERISTICS := nosdcard
 

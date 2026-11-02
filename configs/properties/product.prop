@@ -1,0 +1,2 @@
+# MiuiCamera selects its Global feature and permission paths from mod_device.
+ro.product.mod_device=dada_global
